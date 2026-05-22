@@ -1,0 +1,40 @@
+# Dependency directories
+node_modules/
+/jspm_packages/
+
+# Next.js build and cache
+.next/
+out/
+build/
+
+# Production environment variables and secrets
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env*.local
+
+# Debug and diagnostics logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# System files and overrides
+.DS_Store
+*.pem
+
+# IDEs and editors config files
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# TypeScript cache
+*.tsbuildinfo
+next-env.d.ts

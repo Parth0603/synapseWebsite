@@ -1,0 +1,18 @@
+:root {
+  --neural-violet: 271 91% 65%;
+  --crypto-amber: 24 95% 53%;
+  
+  --font-heading: 'Outfit', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'Fira Code', monospace;
+  
+  --spacing-section: 120px;
+  --spacing-container: 64px;
+}
+
+@media (max-width: 768px) {
+  :root {
+    --spacing-section: 64px;
+    --spacing-container: 20px;
+  }
+}

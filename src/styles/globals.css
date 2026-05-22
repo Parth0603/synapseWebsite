@@ -1,0 +1,19 @@
+@import "./variables.css";
+@import "./base.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .noise-overlay {
+    background-image: radial-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 0);
+    background-size: 4px 4px;
+  }
+  
+  .glass-panel {
+    background: rgba(13, 13, 20, 0.6);
+    backdrop-filter: blur(12px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+}
