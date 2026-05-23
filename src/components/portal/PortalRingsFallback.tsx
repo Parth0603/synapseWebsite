@@ -65,36 +65,72 @@ const FallbackRing = ({
         viewBox="0 0 105 105"
         className="w-full h-full filter drop-shadow-[0_0_8px_rgba(139,92,246,0.35)]"
       >
-        {/* Thin technical blueprint guide outline */}
-        <polygon
+        {/* 1. Heavy Pseudo-3D Segmented Decagon Ring Body */}
+        <motion.polygon
           points={DECAGON_POINTS}
           fill="none"
-          stroke="#7c3aed"
-          strokeWidth="0.15"
-          strokeDasharray="2, 2"
-          opacity="0.25"
+          stroke="#0F1026"
+          strokeWidth="11.5"
+          strokeDasharray="26, 4"
+          vectorEffect="non-scaling-stroke"
+          className="filter drop-shadow-[0_0_3px_rgba(255,255,255,0.06)]"
+          animate={isReducedMotion ? {} : {
+            strokeWidth: [11.5, 12.5, 11.5]
+          }}
+          transition={{
+            duration: 6.0 + index * 0.5,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
         />
-        
-        {/* Glowing Neon Halo (Wide Backdrop Stroke) */}
+
+        {/* 2. Concentric Glowing Neon Channel (Backdrop wide glow) */}
         <motion.polygon
           points={DECAGON_POINTS}
           fill="none"
           stroke={strokeColor}
-          strokeWidth="4.2"
+          strokeWidth="6.0"
+          strokeDasharray="26, 4"
           opacity="0.22"
           vectorEffect="non-scaling-stroke"
+          animate={isReducedMotion ? {} : {
+            strokeWidth: [6.0, 8.0, 6.0],
+            opacity: [0.18, 0.32, 0.18]
+          }}
+          transition={{
+            duration: 4.0 + index * 0.5,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
         />
 
-        {/* Dynamic Glowing Neon Filament (Inner Sharp Core) */}
+        {/* 3. Luminous Sharp Neon Core Tube with Traveling energy pulse */}
         <motion.polygon
           points={DECAGON_POINTS}
           fill="none"
           stroke={strokeColor}
-          strokeWidth="1.4"
+          strokeWidth="1.5"
+          strokeDasharray="18, 12"
           vectorEffect="non-scaling-stroke"
+          animate={isReducedMotion ? {} : {
+            strokeWidth: [1.5, 2.2, 1.5],
+            strokeDashoffset: [0, -30] // dynamic traveling pulse wave!
+          }}
+          transition={{
+            strokeWidth: {
+              duration: 3.0 + index * 0.4,
+              repeat: Infinity,
+              ease: "easeInOut"
+            },
+            strokeDashoffset: {
+              duration: 6.0,
+              repeat: Infinity,
+              ease: "linear"
+            }
+          }}
         />
 
-        {/* Micro tech indicators on vertices */}
+        {/* Micro tech indicators on top and bottom vertices */}
         <circle cx="50" cy="2" r="0.8" fill="#f97316" opacity="0.6" />
         <circle cx="50" cy="103" r="0.8" fill="#f97316" opacity="0.6" />
       </svg>
@@ -107,8 +143,8 @@ export default function PortalRingsFallback({
   isReducedMotion = false
 }: PortalRingsFallbackProps) {
   
-  // Concentric ring levels
-  const ringIndexes = [0, 1, 2, 3, 4];
+  // Concentric ring levels - reduced from 5 to 3 for elegant visual balance
+  const ringIndexes = [0, 1, 2];
 
   return (
     <div className="absolute inset-0 w-full h-full flex items-center justify-center bg-obsidian-950 overflow-hidden z-20 pointer-events-none select-none">

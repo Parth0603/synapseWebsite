@@ -50,21 +50,12 @@ export default function BasePortal() {
     mass: 0.8
   });
 
-  // Narrative Card Transitions synced to interactive progress
-  // Card 1: Emerge into transition immediately on entry (0.0 to 0.35)
-  const textOpacity1 = useTransform(smoothProgress, [0.0, 0.06, 0.28, 0.35], [0, 1, 1, 0]);
-  const textY1 = useTransform(smoothProgress, [0.0, 0.06, 0.28, 0.35], [15, 0, 0, -20]);
-
-  // Card 2: Deep transmission inside the tunnel (0.35 to 0.68)
-  const textOpacity2 = useTransform(smoothProgress, [0.35, 0.42, 0.62, 0.68], [0, 1, 1, 0]);
-  const textY2 = useTransform(smoothProgress, [0.35, 0.42, 0.62, 0.68], [25, 0, 0, -25]);
-
-  // Card 3: Approaching grid gateway exit (0.68 to 0.90)
-  const textOpacity3 = useTransform(smoothProgress, [0.68, 0.75, 0.85, 0.90], [0, 1, 1, 0]);
-  const textY3 = useTransform(smoothProgress, [0.68, 0.75, 0.85, 0.90], [25, 0, 0, -25]);
+  // Combined Single Elegant Narrative Block (reveals at 0.10, dissolves at 0.82)
+  const textOpacity = useTransform(smoothProgress, [0.0, 0.12, 0.80, 0.86], [0, 1, 1, 0]);
+  const textY = useTransform(smoothProgress, [0.0, 0.12, 0.80, 0.86], [20, 0, 0, -20]);
 
   // Global Blueprint HUD border opacity transform
-  const hudOpacity = useTransform(smoothProgress, [0, 0.15, 0.8, 0.90], [0, 0.45, 0.45, 0]);
+  const hudOpacity = useTransform(smoothProgress, [0, 0.15, 0.8, 0.88], [0, 0.28, 0.28, 0]);
 
   // Symmetrical Exit Cross-Fade: Portal fades and expands slightly as exit approach concludes (0.85 to 0.98)
   const portalOpacity = useTransform(smoothProgress, [0.85, 0.98], [1, 0]);
@@ -361,88 +352,66 @@ export default function BasePortal() {
           <div className="absolute top-0 inset-x-0 h-40 bg-gradient-to-b from-obsidian-950 via-obsidian-950/80 to-transparent z-25 pointer-events-none" />
           <div className="absolute bottom-0 inset-x-0 h-40 bg-gradient-to-t from-obsidian-950 via-obsidian-950/80 to-transparent z-25 pointer-events-none" />
 
-          {/* Volumetric Floor Reflection Illusion Plate */}
-          <div 
-            className="absolute bottom-0 inset-x-0 h-48 pointer-events-none z-24 opacity-[0.28] select-none"
+          {/* Volumetric Floor Reflection Illusion Plate with Breathing animation */}
+          <motion.div 
+            className="absolute bottom-0 inset-x-0 h-48 pointer-events-none z-24 select-none origin-bottom"
             style={{
-              backgroundImage: "radial-gradient(ellipse at bottom, rgba(124,58,237,0.18) 0%, rgba(5,5,12,0.8) 70%, #05050C 100%)",
+              backgroundImage: "radial-gradient(ellipse at bottom, rgba(124,58,237,0.22) 0%, rgba(5,5,12,0.8) 70%, #05050C 100%)",
               mixBlendMode: "screen"
+            }}
+            animate={{
+              opacity: [0.25, 0.38, 0.25],
+              scaleY: [1.0, 1.05, 1.0]
+            }}
+            transition={{
+              duration: 6.0,
+              repeat: Infinity,
+              ease: "easeInOut"
             }}
           />
 
-          {/* Top Entrance Environmental Neon Light Spill */}
-          <div 
-            className="absolute top-0 inset-x-0 h-48 pointer-events-none z-24 opacity-[0.22] select-none"
+          {/* Top Entrance Environmental Neon Light Spill with slow drift */}
+          <motion.div 
+            className="absolute top-0 inset-x-0 h-48 pointer-events-none z-24 select-none origin-top"
             style={{
-              backgroundImage: "radial-gradient(ellipse at top, rgba(139,92,246,0.22) 0%, rgba(5,5,12,0.8) 70%, #05050C 100%)",
+              backgroundImage: "radial-gradient(ellipse at top, rgba(139,92,246,0.24) 0%, rgba(5,5,12,0.8) 70%, #05050C 100%)",
               mixBlendMode: "screen"
+            }}
+            animate={{
+              opacity: [0.18, 0.28, 0.18],
+              y: [-2, 2, -2]
+            }}
+            transition={{
+              duration: 8.0,
+              repeat: Infinity,
+              ease: "easeInOut"
             }}
           />
 
           {/* Cinematic Narrative Floating Headings Stack */}
           <div className="absolute inset-0 flex items-center justify-center z-30 pointer-events-none">
               
-              {/* Narrative Prompt Card 1 */}
+              {/* Single Unified Elegant Narrative Card */}
               <motion.div
                 className="absolute text-center max-w-xl px-6 flex flex-col items-center"
                 style={{
-                  opacity: textOpacity1,
-                  y: textY1,
+                  opacity: textOpacity,
+                  y: textY,
                   willChange: "transform, opacity"
                 }}
               >
-                <span className="font-mono text-[10px] tracking-[0.3em] text-brand-amber font-semibold uppercase mb-3">
-                  Initializing Handshake
+                <span className="font-mono text-[9px] tracking-[0.35em] text-brand-amber font-semibold uppercase mb-3">
+                  SYNAPSE CONVERGENCE
                 </span>
-                <h2 className="text-xl md:text-3xl font-extrabold tracking-tight text-white mb-2 font-display">
-                  DELVING DEEPER
+                <h2 className="text-xl md:text-3xl font-extrabold tracking-tight text-white mb-3 font-display">
+                  TRAVERSING THE CORE
                 </h2>
-                <p className="text-xs md:text-sm text-obsidian-400 font-mono tracking-wide leading-relaxed">
-                  Establishing a high-fidelity consensus channel to synthesize computing protocols. Prepare for synchronization.
+                <p className="text-xs md:text-sm text-obsidian-400 font-mono tracking-wide leading-relaxed max-w-md">
+                  Bridging consensus networks to synthesize computing protocols. Welcome to the new ecosystem.
                 </p>
               </motion.div>
 
-              {/* Narrative Prompt Card 2 */}
-              <motion.div
-                className="absolute text-center max-w-xl px-6 flex flex-col items-center"
-                style={{
-                  opacity: textOpacity2,
-                  y: textY2,
-                  willChange: "transform, opacity"
-                }}
-              >
-                <span className="font-mono text-[10px] tracking-[0.3em] text-brand-violet font-semibold uppercase mb-3">
-                  Grid Compiling
-                </span>
-                <h2 className="text-xl md:text-3xl font-extrabold tracking-tight text-white mb-2 font-display">
-                  TRANSLATING ECOSYSTEMS
-                </h2>
-                <p className="text-xs md:text-sm text-obsidian-400 font-mono tracking-wide leading-relaxed">
-                  Consensus packets validated. Structural vector grids are converging to reveal the foundation pillars.
-                </p>
-              </motion.div>
-
-              {/* Narrative Prompt Card 3 */}
-              <motion.div
-                className="absolute text-center max-w-xl px-6 flex flex-col items-center"
-                style={{
-                  opacity: textOpacity3,
-                  y: textY3,
-                  willChange: "transform, opacity"
-                }}
-              >
-                <span className="font-mono text-[10px] tracking-[0.3em] text-brand-amber font-semibold uppercase mb-3">
-                  Gateways Aligned
-                </span>
-                <h2 className="text-xl md:text-3xl font-extrabold tracking-tight text-white mb-2 font-display">
-                  WELCOME TO THE SYNAPSE
-                </h2>
-                <p className="text-xs md:text-sm text-obsidian-400 font-mono tracking-wide leading-relaxed">
-                  Visual portals aligned. Emerging into the core sponsor network ecosystem. Ready for launch.
-                </p>
-              </motion.div>
-
-            </div>
+          </div>
 
           {/* Development Audit HUD - Activated with Shift + D */}
           {isDebugMode && (

@@ -154,7 +154,7 @@ export default function SponsorsSection() {
   return (
     <section
       id="sponsors-section"
-      className="relative w-full min-h-screen bg-obsidian-950 overflow-visible py-28 z-30 -mt-[40vh] lg:-mt-[50vh]"
+      className="relative w-full min-h-screen bg-obsidian-950 overflow-visible py-28 z-30 -mt-[50vh]"
       aria-label="Synapse Ecosystem Partners"
     >
       {/* Blueprint background coordinate grid & Dynamic atmospheric backdrops */}

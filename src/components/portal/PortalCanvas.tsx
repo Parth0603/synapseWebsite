@@ -7,7 +7,7 @@ import { MotionValue } from "framer-motion";
 import * as THREE from "three";
 
 // ============================================================================
-// CINEMATIC WEBGL SHADER SYSTEM
+// CINEMATIC WEBGL SHADER SYSTEM & LIFE ENGINE
 // ============================================================================
 
 // Vertex Shader drives organic rippling waves along depth coordinates
@@ -35,7 +35,7 @@ const DecagonRingVertexShader = `
   }
 `;
 
-// Filament Fragment Shader: compiles a sharp, white-hot, intense inner neon tube core
+// Filament Fragment Shader: compiles a sharp, white-hot, intense inner neon tube core with micro-shimmers
 const DecagonFilamentShader = {
   vertexShader: DecagonRingVertexShader,
   fragmentShader: `
@@ -54,34 +54,73 @@ const DecagonFilamentShader = {
       
       // Z-depth pulsing wave
       float pulse = sin(vPosition.z * 1.5 - uTime * 2.5 - uScroll * 8.0) * 0.5 + 0.5;
-      vec3 baseColor = mix(uColor, vec3(0.98, 0.55, 0.1), pulse * 0.35);
+      
+      // traveling wavefront running down the corridor along the Z-axis
+      float wavePos = vPosition.z * 0.16 - uTime * 1.8;
+      float pulseWave = sin(wavePos * 3.1415926) * 0.5 + 0.5;
+      float travelingPulse = pow(pulseWave, 10.0) * 0.45;
+      
+      vec3 baseColor = mix(uColor, vec3(0.98, 0.55, 0.1), (pulse * 0.35) + travelingPulse * 0.25);
       
       // Inject white-hot core energy filament
       vec3 finalColor = mix(baseColor, vec3(1.0, 1.0, 1.0), filament * 0.92);
       
-      // Exponential depth fog for mysterious atmospheric scale
+      // Exponential depth fog with organic drift
       float fogDensity = 0.065;
-      float fogFactor = exp(-pow(vDepth * fogDensity, 2.0));
+      float drift = sin(uTime * 0.2 + vPosition.z * 0.05) * 0.01;
+      float adjustedDepth = vDepth * (1.0 + drift);
+      float fogFactor = exp(-pow(adjustedDepth * fogDensity, 2.0));
       fogFactor = clamp(fogFactor, 0.0, 1.0);
       
       // Symmetrical near-clip fade-out to prevent geometric clipping pop-ins
       float nearFade = smoothstep(0.1, 1.6, vDepth);
       
+      // Depth-based luminance falloff
+      float depthFalloff = clamp(1.0 - (vDepth * 0.038), 0.15, 1.0);
+      
+      // Active high-frequency specular electrical micro-shimmer
+      float shimmer = sin(uTime * 14.0) * 0.015 + 0.985;
+      
       // Apply exit portal scale dilation
       float exitScale = smoothstep(0.82, 1.0, uScroll);
-      float finalOpacity = uOpacity * filament * fogFactor * nearFade * (1.0 - exitScale);
+      float finalOpacity = uOpacity * filament * fogFactor * nearFade * depthFalloff * shimmer * (1.0 - exitScale);
       
       gl_FragColor = vec4(finalColor, finalOpacity);
     }
   `
 };
 
-// Volumetric Halo Fragment Shader: compiles a soft, wide-radius atmospheric color spill
-const DecagonHaloShader = {
-  vertexShader: DecagonRingVertexShader,
+// Segmented Ring Fragment Shader: compiles a beveled, physically thick segmented pseudo-3D body
+const DecagonSegmentedShader = {
+  vertexShader: `
+    varying vec2 vUv;
+    varying vec3 vPosition;
+    varying vec3 vNormal;
+    varying float vDepth;
+    uniform float uScroll;
+    uniform float uTime;
+    
+    void main() {
+      vUv = uv;
+      vPosition = position;
+      
+      // Faint organic rippling data wave
+      float wave = sin(position.z * 1.5 + uScroll * 8.0 + uTime * 2.0) * 0.03;
+      vec3 pos = position;
+      pos.x += wave * cos(position.z + uTime);
+      pos.y += wave * sin(position.z + uTime);
+      
+      vNormal = normalize(normalMatrix * normal);
+      
+      vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
+      vDepth = -mvPosition.z;
+      gl_Position = projectionMatrix * mvPosition;
+    }
+  `,
   fragmentShader: `
     varying vec2 vUv;
     varying vec3 vPosition;
+    varying vec3 vNormal;
     varying float vDepth;
     uniform vec3 uColor;
     uniform float uOpacity;
@@ -89,29 +128,67 @@ const DecagonHaloShader = {
     uniform float uScroll;
     
     void main() {
-      // Soft, wide-radius parabolic light spill
-      float centerGlow = sin(vUv.y * 3.1415926);
-      float halo = pow(centerGlow, 1.6);
+      // 1. Decagonal segmentation gaps around the ring circular path (vUv.x represents tubular coord)
+      float segmentsCount = 10.0;
+      float segmentPattern = sin(vUv.x * 3.1415926 * 2.0 * segmentsCount);
       
-      // Z-depth pulsing wave
+      // Beveled shadow crevices between decagon segments
+      float crevice = smoothstep(0.91, 0.98, abs(segmentPattern));
+      float segmentMask = mix(1.0, 0.05, crevice);
+      
+      // 2. Beveled edge highlights & 3D diffuse/specular shading
+      vec3 normal = normalize(vNormal);
+      
+      // Cinematic light source coming from top-left direction
+      vec3 lightDir = normalize(vec3(0.3, 0.8, 0.5));
+      float diffuse = max(dot(normal, lightDir), 0.0);
+      
+      // Outer rim lighting highlight
+      float rim = pow(1.0 - max(dot(normal, vec3(0.0, 0.0, 1.0)), 0.0), 3.5);
+      
+      // Polished metal edge specular highlight (enhanced for hexagonal face depth)
+      float edgeGleam = pow(max(dot(normal, normalize(vec3(0.1, 0.95, 0.3))), 0.0), 24.0) * 0.70;
+      
+      // 3. Layered Gradient Material (Matte Obsidian core)
+      vec3 baseColor = vec3(0.04, 0.05, 0.10);
+      
+      // Traveling wavefront running down the corridor along the Z-axis
+      float wavePos = vPosition.z * 0.16 - uTime * 1.8;
+      float pulseWave = sin(wavePos * 3.1415926) * 0.5 + 0.5;
+      float travelingPulse = pow(pulseWave, 12.0) * 0.38;
+      
+      // Neon light spill reflection bleeding from the core filament
       float pulse = sin(vPosition.z * 1.5 - uTime * 2.5 - uScroll * 8.0) * 0.5 + 0.5;
-      vec3 baseColor = mix(uColor, vec3(0.98, 0.55, 0.1), pulse * 0.35);
+      vec3 neonGlowColor = mix(uColor, vec3(0.98, 0.55, 0.1), (pulse * 0.35) + travelingPulse * 0.25);
       
-      // Embedded telemetry dashboard scanlines
-      float scanline = step(0.96, sin(vPosition.y * 14.0 + uTime * 0.8) * 0.5 + 0.5);
-      vec3 finalColor = mix(baseColor, vec3(1.0, 1.0, 1.0), scanline * 0.12 * halo);
+      // Light spill bleeds on inner circle bevels
+      float innerBevel = sin(vUv.y * 3.1415926);
       
-      // Exponential depth fog
+      vec3 shadedMaterial = baseColor + (diffuse * 0.18) + (rim * vec3(0.35, 0.25, 0.5) * 0.30) + (edgeGleam * vec3(1.0));
+      vec3 finalColor = mix(shadedMaterial, neonGlowColor, innerBevel * 0.32 * (0.45 + pulse * 0.55 + travelingPulse));
+      
+      // Inject traveling energy pulse coloring directly
+      finalColor += travelingPulse * uColor * 0.30;
+      
+      // Apply segmented shadow mask
+      finalColor *= segmentMask;
+      
+      // 4. Exponential depth fog with organic drift
       float fogDensity = 0.065;
-      float fogFactor = exp(-pow(vDepth * fogDensity, 2.0));
+      float drift = sin(uTime * 0.2 + vPosition.z * 0.05) * 0.01;
+      float adjustedDepth = vDepth * (1.0 + drift);
+      float fogFactor = exp(-pow(adjustedDepth * fogDensity, 2.0));
       fogFactor = clamp(fogFactor, 0.0, 1.0);
       
       // Symmetrical near-clip fade-out
       float nearFade = smoothstep(0.1, 1.6, vDepth);
       
-      // Apply exit portal scale dilation
+      // Depth-based luminance falloff
+      float depthFalloff = clamp(1.0 - (vDepth * 0.038), 0.15, 1.0);
+      
+      // Exit scale dilation fade
       float exitScale = smoothstep(0.82, 1.0, uScroll);
-      float finalOpacity = uOpacity * halo * 0.45 * (0.4 + pulse * 0.6) * fogFactor * nearFade * (1.0 - exitScale);
+      float finalOpacity = uOpacity * fogFactor * nearFade * depthFalloff * (1.0 - exitScale);
       
       gl_FragColor = vec4(finalColor, finalOpacity);
     }
@@ -119,16 +196,25 @@ const DecagonHaloShader = {
 };
 
 // ============================================================================
-// CAMERA CONTROLLER MATRIX
+// CAMERA CONTROLLER MATRIX WITH CINEMATIC SWAY
 // ============================================================================
 const CameraController = ({ scrollYProgress }: { scrollYProgress: MotionValue<number> }) => {
   const { camera } = useThree();
   
-  useFrame(() => {
+  useFrame((state) => {
     const progress = scrollYProgress.get();
     
-    // Exponential acceleration curve driving Z-depth camera travel (starts closer at 4.2 for massive initial scale)
-    const targetZ = 4.2 - Math.pow(progress, 1.8) * 24.2;
+    // High-fidelity camera orbital stabilizer sway to simulate hand-held camera presence
+    const time = state.clock.getElapsedTime();
+    const swayX = Math.sin(time * 0.55) * 0.038 + Math.cos(time * 0.25) * 0.012;
+    const swayY = Math.cos(time * 0.45) * 0.038 + Math.sin(time * 0.20) * 0.012;
+    const swayZ = Math.sin(time * 0.3) * 0.015; // slow breathing motion
+    
+    camera.position.x = THREE.MathUtils.lerp(camera.position.x, swayX, 0.04);
+    camera.position.y = THREE.MathUtils.lerp(camera.position.y, swayY, 0.04);
+    
+    // Exponential acceleration curve driving Z-depth camera travel (starts closer at 4.2 plus Z breath)
+    const targetZ = 4.2 - Math.pow(progress, 1.8) * 18.2 + swayZ;
     camera.position.z = THREE.MathUtils.lerp(camera.position.z, targetZ, 0.08);
     
     // Peripheral warping via dynamic FOV expansion
@@ -138,11 +224,6 @@ const CameraController = ({ scrollYProgress }: { scrollYProgress: MotionValue<nu
       perspectiveCamera.fov = THREE.MathUtils.lerp(perspectiveCamera.fov, targetFov, 0.08);
       perspectiveCamera.updateProjectionMatrix();
     }
-    
-    // Vast, elegant, slow camera drift (micro-hovering effect)
-    const time = Date.now() * 0.0004;
-    camera.position.x = THREE.MathUtils.lerp(camera.position.x, Math.sin(time) * 0.02, 0.04);
-    camera.position.y = THREE.MathUtils.lerp(camera.position.y, Math.cos(time * 0.7) * 0.02, 0.04);
   });
   
   return null;
@@ -160,9 +241,9 @@ const DecagonTunnel = ({
 }) => {
   const tunnelRef = useRef<THREE.Group>(null);
   
-  // Responsive ring density configuration - 12 rings on desktop for extreme depth
-  const ringCount = isMobile ? 5 : 12;
-  const spacing = 2.4;
+  // Responsive ring density configuration - 6 rings on desktop for spacious depth
+  const ringCount = isMobile ? 3 : 6;
+  const spacing = 4.0;
   
   // Custom shader uniforms for dual-layer meshes
   const filamentUniforms = useMemo(() => ({
@@ -176,12 +257,12 @@ const DecagonTunnel = ({
     uTime: { value: 0 },
     uScroll: { value: 0 },
     uColor: { value: new THREE.Color("#8b5cf6") },
-    uOpacity: { value: 0.42 } // Ambient opacity for wide volumetric halo
+    uOpacity: { value: 0.95 } // High opacity for solid physical rings
   }), []);
 
-  // Shared geometry geometries compiled exactly once on GPU and reused across all meshes
-  const filamentGeometry = useMemo(() => new THREE.CylinderGeometry(2.49, 2.49, 0.03, 10, 1, true), []);
-  const haloGeometry = useMemo(() => new THREE.CylinderGeometry(2.52, 2.52, 0.22, 10, 1, true), []);
+  // Shared geometries compiled exactly once on GPU - Torus is Hexagonal tube (6 radial segments)
+  const filamentGeometry = useMemo(() => new THREE.CylinderGeometry(2.44, 2.44, 0.03, 10, 1, true), []);
+  const segmentedTorusGeometry = useMemo(() => new THREE.TorusGeometry(2.48, 0.16, 6, 10), []);
 
   // Shared shader materials compiled exactly once on GPU - wireframe set to false
   const filamentMaterial = useMemo(() => new THREE.ShaderMaterial({
@@ -192,29 +273,29 @@ const DecagonTunnel = ({
     wireframe: false,
     depthWrite: false,
     blending: THREE.AdditiveBlending,
-    side: THREE.DoubleSide // Ensure inner faces are rendered when camera is inside
+    side: THREE.DoubleSide
   }), [filamentUniforms]);
 
-  const haloMaterial = useMemo(() => new THREE.ShaderMaterial({
-    vertexShader: DecagonHaloShader.vertexShader,
-    fragmentShader: DecagonHaloShader.fragmentShader,
+  const segmentedTorusMaterial = useMemo(() => new THREE.ShaderMaterial({
+    vertexShader: DecagonSegmentedShader.vertexShader,
+    fragmentShader: DecagonSegmentedShader.fragmentShader,
     uniforms: haloUniforms,
     transparent: true,
     wireframe: false,
     depthWrite: false,
-    blending: THREE.AdditiveBlending,
-    side: THREE.DoubleSide // Ensure inner faces are rendered when camera is inside
+    blending: THREE.NormalBlending, // Normal blending for solid stone segments
+    side: THREE.DoubleSide
   }), [haloUniforms]);
 
   // Clean up WebGL resources on component unmount to prevent GPU memory leaks
   React.useEffect(() => {
     return () => {
       filamentGeometry.dispose();
-      haloGeometry.dispose();
+      segmentedTorusGeometry.dispose();
       filamentMaterial.dispose();
-      haloMaterial.dispose();
+      segmentedTorusMaterial.dispose();
     };
-  }, [filamentGeometry, haloGeometry, filamentMaterial, haloMaterial]);
+  }, [filamentGeometry, segmentedTorusGeometry, filamentMaterial, segmentedTorusMaterial]);
 
   useFrame((state) => {
     const elapsed = state.clock.getElapsedTime();
@@ -238,12 +319,12 @@ const DecagonTunnel = ({
         const zPos = -i * spacing;
         
         return (
-          <group key={i} position={[0, 0, zPos]} rotation={[Math.PI / 2, 0, Math.PI / 10]}>
-            {/* 1. Volumetric Halo Ambient Haze Ring */}
-            <mesh geometry={haloGeometry} material={haloMaterial} />
+          <group key={i} position={[0, 0, zPos]}>
+            {/* 1. Physically Massive Segmented Torus Ring Body */}
+            <mesh geometry={segmentedTorusGeometry} material={segmentedTorusMaterial} />
             
-            {/* 2. Sharp Luminous Core Neon Filament Ring */}
-            <mesh geometry={filamentGeometry} material={filamentMaterial} />
+            {/* 2. Nestled Core Neon Filament Ring */}
+            <mesh geometry={filamentGeometry} material={filamentMaterial} rotation={[Math.PI / 2, 0, Math.PI / 10]} />
           </group>
         );
       })}
@@ -255,7 +336,7 @@ const DecagonTunnel = ({
 // HIGH-VELOCITY CONSENSUS PACKET PARTICLES SYSTEM
 // ============================================================================
 const ConsensusParticles = ({ scrollYProgress }: { scrollYProgress: MotionValue<number> }) => {
-  const count = 120;
+  const count = 60;
   const pointsRef = useRef<THREE.Points>(null);
 
   // Generate particle coordinates within a cylindrical travel volume
@@ -362,23 +443,36 @@ const PortalFocalCore = ({ scrollYProgress }: { scrollYProgress: MotionValue<num
       uniform vec3 uColorAmber;
       
       void main() {
-        // Radial gradient glow representation from center of UV space
+        // Radial distance from center of UV space
         float dist = distance(vUv, vec2(0.5));
-        float glow = exp(-dist * 5.2);
         
-        // Intense center focal core white flare
-        float core = exp(-dist * 22.0) * 1.5;
+        // Dynamic breathing core scale using a low frequency wave
+        float breathingScale = sin(uTime * 1.8) * 0.08 + 1.0;
+        float adjustedDist = dist * breathingScale;
+        
+        float glow = exp(-adjustedDist * 4.8);
+        
+        // Flare angle computation to create a gorgeous multi-layered starburst/corona effect
+        vec2 centerToUv = vUv - vec2(0.5);
+        float angle = atan(centerToUv.y, centerToUv.x);
+        
+        // High-frequency corona energy ripples
+        float coronaRipples = sin(angle * 6.0 + uTime * 4.0) * 0.12 * sin(angle * 3.0 - uTime * 2.0);
+        float corona = exp(-adjustedDist * (12.0 + coronaRipples * 24.0)) * 0.85;
+        
+        // Intense center focal core flare
+        float core = exp(-adjustedDist * 25.0) * 1.8;
         
         // High-frequency energy micro pulsation
-        float pulse = sin(uTime * 3.5) * 0.15 + 0.85;
+        float pulse = sin(uTime * 4.0) * 0.12 + 0.88;
         
         // Ambient color shift representing AI + Blockchain synchronization
-        vec3 color = mix(uColorViolet, uColorAmber, sin(uTime * 1.2) * 0.5 + 0.5);
-        vec3 finalColor = mix(color * glow * pulse, vec3(1.0, 1.0, 1.0), core * pulse);
+        vec3 color = mix(uColorViolet, uColorAmber, sin(uTime * 0.8) * 0.5 + 0.5);
+        vec3 finalColor = mix(color * (glow + corona) * pulse, vec3(1.0, 1.0, 1.0), core * pulse);
         
         // Dilate and fade out as the user emerges from the portal
         float exitScale = smoothstep(0.75, 0.98, uScroll);
-        float opacity = (glow + core) * 0.95 * (1.0 - exitScale);
+        float opacity = (glow + corona + core) * 0.95 * (1.0 - exitScale);
         
         gl_FragColor = vec4(finalColor, opacity);
       }
