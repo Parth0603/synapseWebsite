@@ -60,7 +60,7 @@ const DecagonFilamentShader = {
       vec3 finalColor = mix(baseColor, vec3(1.0, 1.0, 1.0), filament * 0.92);
       
       // Exponential depth fog for mysterious atmospheric scale
-      float fogDensity = 0.058;
+      float fogDensity = 0.065;
       float fogFactor = exp(-pow(vDepth * fogDensity, 2.0));
       fogFactor = clamp(fogFactor, 0.0, 1.0);
       
@@ -102,7 +102,7 @@ const DecagonHaloShader = {
       vec3 finalColor = mix(baseColor, vec3(1.0, 1.0, 1.0), scanline * 0.12 * halo);
       
       // Exponential depth fog
-      float fogDensity = 0.058;
+      float fogDensity = 0.065;
       float fogFactor = exp(-pow(vDepth * fogDensity, 2.0));
       fogFactor = clamp(fogFactor, 0.0, 1.0);
       
@@ -127,8 +127,8 @@ const CameraController = ({ scrollYProgress }: { scrollYProgress: MotionValue<nu
   useFrame(() => {
     const progress = scrollYProgress.get();
     
-    // Exponential acceleration curve driving Z-depth camera travel
-    const targetZ = 6 - Math.pow(progress, 1.8) * 26;
+    // Exponential acceleration curve driving Z-depth camera travel (starts closer at 4.2 for massive initial scale)
+    const targetZ = 4.2 - Math.pow(progress, 1.8) * 24.2;
     camera.position.z = THREE.MathUtils.lerp(camera.position.z, targetZ, 0.08);
     
     // Peripheral warping via dynamic FOV expansion
@@ -330,6 +330,91 @@ const ConsensusParticles = ({ scrollYProgress }: { scrollYProgress: MotionValue<
 };
 
 // ============================================================================
+// DYNAMIC GLOWING FOCAL ENERGY CORE (DEEP-END PORTAL VISUAL CORE)
+// ============================================================================
+const PortalFocalCore = ({ scrollYProgress }: { scrollYProgress: MotionValue<number> }) => {
+  const meshRef = useRef<THREE.Mesh>(null);
+  
+  const uniforms = useMemo(() => ({
+    uTime: { value: 0 },
+    uScroll: { value: 0 },
+    uColorViolet: { value: new THREE.Color("#8b5cf6") },
+    uColorAmber: { value: new THREE.Color("#f97316") }
+  }), []);
+
+  const material = useMemo(() => new THREE.ShaderMaterial({
+    uniforms,
+    vertexShader: `
+      varying vec2 vUv;
+      varying vec3 vPosition;
+      void main() {
+        vUv = uv;
+        vPosition = position;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `,
+    fragmentShader: `
+      varying vec2 vUv;
+      varying vec3 vPosition;
+      uniform float uTime;
+      uniform float uScroll;
+      uniform vec3 uColorViolet;
+      uniform vec3 uColorAmber;
+      
+      void main() {
+        // Radial gradient glow representation from center of UV space
+        float dist = distance(vUv, vec2(0.5));
+        float glow = exp(-dist * 5.2);
+        
+        // Intense center focal core white flare
+        float core = exp(-dist * 22.0) * 1.5;
+        
+        // High-frequency energy micro pulsation
+        float pulse = sin(uTime * 3.5) * 0.15 + 0.85;
+        
+        // Ambient color shift representing AI + Blockchain synchronization
+        vec3 color = mix(uColorViolet, uColorAmber, sin(uTime * 1.2) * 0.5 + 0.5);
+        vec3 finalColor = mix(color * glow * pulse, vec3(1.0, 1.0, 1.0), core * pulse);
+        
+        // Dilate and fade out as the user emerges from the portal
+        float exitScale = smoothstep(0.75, 0.98, uScroll);
+        float opacity = (glow + core) * 0.95 * (1.0 - exitScale);
+        
+        gl_FragColor = vec4(finalColor, opacity);
+      }
+    `,
+    transparent: true,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending
+  }), [uniforms]);
+
+  React.useEffect(() => {
+    return () => {
+      material.dispose();
+    };
+  }, [material]);
+
+  useFrame((state) => {
+    const elapsed = state.clock.getElapsedTime();
+    const scroll = scrollYProgress.get();
+    
+    uniforms.uTime.value = elapsed;
+    uniforms.uScroll.value = scroll;
+    
+    if (meshRef.current) {
+      meshRef.current.rotation.z = elapsed * 0.05;
+    }
+  });
+
+  return (
+    <mesh ref={meshRef} position={[0, 0, -28]} scale={[5.0, 5.0, 1.0]}>
+      <planeGeometry args={[1, 1]} />
+      <primitive object={material} attach="material" />
+    </mesh>
+  );
+};
+
+// ============================================================================
 // MAIN PORTAL CANVAS CONTAINER
 // ============================================================================
 export default function PortalCanvas({
@@ -354,12 +439,12 @@ export default function PortalCanvas({
         {/* Core Lighting System: Symmetrical Ambient + Spotlights */}
         <ambientLight intensity={0.15} />
         
-        {/* Neural Violet Top Spotlight */}
+        {/* Neural Violet Top Spotlight (Enhanced for rich cylinder face highlights) */}
         <spotLight
           position={[0, 8, -5]}
           angle={0.6}
           penumbra={1}
-          intensity={4.5}
+          intensity={5.2}
           color="#8b5cf6"
         />
         
@@ -368,12 +453,15 @@ export default function PortalCanvas({
           position={[0, -8, -5]}
           angle={0.6}
           penumbra={1}
-          intensity={3.0}
+          intensity={3.6}
           color="#f97316"
         />
 
         {/* Concentric Decagonal Volumetric Neon Corridor */}
         <DecagonTunnel scrollYProgress={scrollYProgress} isMobile={isMobile} />
+
+        {/* Cinematic Pulsing Focal Energy Core at the deep end */}
+        <PortalFocalCore scrollYProgress={scrollYProgress} />
 
         {/* Dynamic Drifting Particle Streams */}
         {!isMobile && <ConsensusParticles scrollYProgress={scrollYProgress} />}

@@ -51,9 +51,9 @@ export default function BasePortal() {
   });
 
   // Narrative Card Transitions synced to interactive progress
-  // Card 1: Emerge into transition (0.02 to 0.35)
-  const textOpacity1 = useTransform(smoothProgress, [0.02, 0.08, 0.28, 0.35], [0, 1, 1, 0]);
-  const textY1 = useTransform(smoothProgress, [0.02, 0.08, 0.28, 0.35], [25, 0, 0, -25]);
+  // Card 1: Emerge into transition immediately on entry (0.0 to 0.35)
+  const textOpacity1 = useTransform(smoothProgress, [0.0, 0.06, 0.28, 0.35], [0, 1, 1, 0]);
+  const textY1 = useTransform(smoothProgress, [0.0, 0.06, 0.28, 0.35], [15, 0, 0, -20]);
 
   // Card 2: Deep transmission inside the tunnel (0.35 to 0.68)
   const textOpacity2 = useTransform(smoothProgress, [0.35, 0.42, 0.62, 0.68], [0, 1, 1, 0]);
@@ -366,6 +366,15 @@ export default function BasePortal() {
             className="absolute bottom-0 inset-x-0 h-48 pointer-events-none z-24 opacity-[0.28] select-none"
             style={{
               backgroundImage: "radial-gradient(ellipse at bottom, rgba(124,58,237,0.18) 0%, rgba(5,5,12,0.8) 70%, #05050C 100%)",
+              mixBlendMode: "screen"
+            }}
+          />
+
+          {/* Top Entrance Environmental Neon Light Spill */}
+          <div 
+            className="absolute top-0 inset-x-0 h-48 pointer-events-none z-24 opacity-[0.22] select-none"
+            style={{
+              backgroundImage: "radial-gradient(ellipse at top, rgba(139,92,246,0.22) 0%, rgba(5,5,12,0.8) 70%, #05050C 100%)",
               mixBlendMode: "screen"
             }}
           />
