@@ -82,9 +82,12 @@ export default function FAQSection() {
   };
 
   return (
-    <SectionWrapper id="faq-section" className="border-t border-white/5 bg-obsidian-950">
+    <SectionWrapper id="faq-section">
+      {/* Muted background gradients to balance empty dark areas */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[350px] rounded-full bg-brand-violet/[0.018] blur-[120px] pointer-events-none" />
+
       {/* Decorative Blueprint coordinates */}
-      <div className="absolute top-12 left-12 font-mono text-[9px] text-brand-violet/20 hidden xl:block">
+      <div className="absolute top-12 left-12 font-mono text-[9px] text-brand-violet/20 hidden xl:block select-none">
         [ SYSTEM_RESOLVER: FAQ_VAULT_V.1.0 ]
       </div>
 

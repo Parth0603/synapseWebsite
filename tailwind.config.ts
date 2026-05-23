@@ -10,9 +10,9 @@ const config: Config = {
     extend: {
       colors: {
         obsidian: {
-          950: "#030305",
-          900: "#09090E",
-          800: "#0D0D15",
+          950: "#05050C",
+          900: "#0A0B16",
+          800: "#0E1020",
         },
         brand: {
           violet: {
@@ -22,6 +22,10 @@ const config: Config = {
           amber: {
             DEFAULT: "hsl(var(--crypto-amber) / <alpha-value>)",
             glow: "hsla(24, 95%, 53%, 0.08)",
+          },
+          teal: {
+            DEFAULT: "hsl(var(--neural-teal) / <alpha-value>)",
+            glow: "hsla(174, 86%, 45%, 0.08)",
           },
         },
       },

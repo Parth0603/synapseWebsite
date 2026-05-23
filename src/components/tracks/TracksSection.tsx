@@ -4,6 +4,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import TrackGrid from "./TrackGrid";
 import { Track } from "./TrackCard";
+import { SectionWrapper } from "@/components/ui/SectionWrapper";
 
 // ============================================================================
 // HIGH-FIDELITY EVENT TRACKS & CHALLENGES DATASET
@@ -101,10 +102,9 @@ const EVENT_TRACKS: Track[] = [
 
 export default function TracksSection() {
   return (
-    <section
-      id="tracks-section"
+    <SectionWrapper
+      id="tracks"
       className="relative w-full min-h-screen bg-obsidian-950 overflow-visible py-28 z-30"
-      aria-label="Synapse Tracks and Challenges"
     >
       {/* Visual blueprint background grid */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(139,92,246,0.02)_0%,transparent_60%)] pointer-events-none" />
@@ -192,8 +192,7 @@ export default function TracksSection() {
 
           </div>
         </motion.div>
-
       </div>
-    </section>
+    </SectionWrapper>
   );
 }

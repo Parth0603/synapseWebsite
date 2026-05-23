@@ -2,6 +2,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import JudgeCard, { Judge } from "./JudgeCard";
+import { SectionWrapper } from "@/components/ui/SectionWrapper";
 
 export default function JudgesSection() {
   const juryBoard: Judge[] = [
@@ -113,7 +114,7 @@ export default function JudgesSection() {
   ];
 
   return (
-    <section id="judges-section" className="relative w-full py-24 md:py-32 bg-[#030305] border-t border-white/[0.04] overflow-hidden select-none">
+    <SectionWrapper id="judges" className="relative w-full py-24 md:py-32 overflow-hidden select-none">
       {/* Background visual layers */}
       <div 
         className="absolute inset-0 opacity-[0.02] pointer-events-none" 
@@ -282,6 +283,6 @@ export default function JudgesSection() {
           </div>
         </motion.div>
       </div>
-    </section>
+    </SectionWrapper>
   );
 }

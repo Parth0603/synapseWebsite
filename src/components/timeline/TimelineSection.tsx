@@ -3,6 +3,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import TimelineNode, { TimelineEvent } from "./TimelineNode";
 import TimelineConnector from "./TimelineConnector";
+import { SectionWrapper } from "@/components/ui/SectionWrapper";
 
 export default function TimelineSection() {
   const events: TimelineEvent[] = [
@@ -88,7 +89,10 @@ export default function TimelineSection() {
   ];
 
   return (
-    <section id="timeline-section" className="relative w-full py-24 md:py-32 bg-obsidian-950 border-t border-white/[0.04] overflow-hidden select-none">
+    <SectionWrapper
+      id="timeline"
+      className="relative w-full min-h-screen bg-obsidian-950 overflow-visible py-28 z-30"
+    >
       {/* Background canvas elements */}
       <div 
         className="absolute inset-0 opacity-[0.02] pointer-events-none" 
@@ -221,6 +225,6 @@ export default function TimelineSection() {
           </div>
         </motion.div>
       </div>
-    </section>
+    </SectionWrapper>
   );
 }

@@ -35,10 +35,10 @@ export default function TrackCard({ track, index }: TrackCardProps) {
       pill: "bg-brand-amber/5 text-brand-amber/80 border-brand-amber/10"
     },
     cyan: {
-      border: "hover:border-teal-500/50",
+      border: "hover:border-brand-teal/50",
       glow: "rgba(20, 184, 166, 0.12)", // Sponsor Cyan/Teal radial glow
-      iconBg: "bg-teal-500/10 text-teal-400 border-teal-500/20",
-      pill: "bg-teal-500/5 text-teal-400/80 border-teal-500/10"
+      iconBg: "bg-brand-teal/10 text-brand-teal border-brand-teal/20",
+      pill: "bg-brand-teal/5 text-brand-teal/80 border-brand-teal/10"
     },
     rose: {
       border: "hover:border-rose-500/50",

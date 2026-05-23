@@ -157,8 +157,10 @@ export default function SponsorsSection() {
       className="relative w-full min-h-screen bg-obsidian-950 overflow-visible py-28 z-30 -mt-[40vh] lg:-mt-[50vh]"
       aria-label="Synapse Ecosystem Partners"
     >
-      {/* Blueprint background coordinate grid */}
+      {/* Blueprint background coordinate grid & Dynamic atmospheric backdrops */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom,rgba(124,58,237,0.03)_0%,transparent_60%)] pointer-events-none" />
+      <div className="absolute top-1/4 left-[10%] w-[500px] h-[350px] rounded-full bg-brand-violet/[0.025] blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-1/4 right-[10%] w-[500px] h-[350px] rounded-full bg-brand-amber/[0.015] blur-[120px] pointer-events-none" />
 
       {/* Layer 30: Container wrapper */}
       <div className="max-w-7xl mx-auto px-6 relative z-10 flex flex-col items-center">

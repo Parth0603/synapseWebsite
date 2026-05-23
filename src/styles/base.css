@@ -1,6 +1,10 @@
 html,
 body {
-  background-color: #030305;
+  background-color: #05050C;
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(124, 58, 237, 0.03) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(249, 115, 22, 0.02) 0px, transparent 50%);
+  background-attachment: fixed;
   color: #F8FAFC;
   overflow-x: hidden;
   font-family: var(--font-body);
@@ -14,7 +18,7 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #030305;
+  background: #05050C;
 }
 
 ::-webkit-scrollbar-thumb {
