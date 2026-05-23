@@ -75,12 +75,22 @@ const FallbackRing = ({
           opacity="0.25"
         />
         
-        {/* Master Decagonal glowing vector outline */}
+        {/* Glowing Neon Halo (Wide Backdrop Stroke) */}
         <motion.polygon
           points={DECAGON_POINTS}
           fill="none"
           stroke={strokeColor}
-          strokeWidth="0.8"
+          strokeWidth="4.2"
+          opacity="0.22"
+          vectorEffect="non-scaling-stroke"
+        />
+
+        {/* Dynamic Glowing Neon Filament (Inner Sharp Core) */}
+        <motion.polygon
+          points={DECAGON_POINTS}
+          fill="none"
+          stroke={strokeColor}
+          strokeWidth="1.4"
           vectorEffect="non-scaling-stroke"
         />
 

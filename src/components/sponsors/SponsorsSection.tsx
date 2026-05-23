@@ -162,8 +162,14 @@ export default function SponsorsSection() {
       <div className="absolute top-1/4 left-[10%] w-[500px] h-[350px] rounded-full bg-brand-violet/[0.025] blur-[120px] pointer-events-none" />
       <div className="absolute bottom-1/4 right-[10%] w-[500px] h-[350px] rounded-full bg-brand-amber/[0.015] blur-[120px] pointer-events-none" />
 
-      {/* Layer 30: Container wrapper */}
-      <div className="max-w-7xl mx-auto px-6 relative z-10 flex flex-col items-center">
+      {/* Layer 30: Container wrapper with viewport scroll reveal transition */}
+      <motion.div 
+        className="max-w-7xl mx-auto px-6 relative z-10 flex flex-col items-center"
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+      >
         
         {/* Header Block with technical alignment */}
         <div className="text-center max-w-3xl flex flex-col items-center mb-24">
@@ -258,7 +264,7 @@ export default function SponsorsSection() {
           </a>
         </motion.div>
 
-      </div>
+      </motion.div>
     </section>
   );
 }

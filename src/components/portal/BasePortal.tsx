@@ -179,8 +179,8 @@ export default function BasePortal() {
         // Scroll slightly above the trigger threshold to let the user return to Hero
         const scrollTarget = (containerRef.current?.offsetTop || 0) - 150;
         window.scrollTo({ top: scrollTarget, behavior: "smooth" });
-      } else if (e.deltaY > 0 && targetProgress.current === 1 && currentVal > 0.9999) {
-        // User scrolled DOWN at progress 1 -> Release scroll downwards to Sponsors
+      } else if (e.deltaY > 0 && targetProgress.current >= 0.97 && currentVal > 0.96) {
+        // User scrolled DOWN at progress near completion -> Release scroll downwards to Sponsors
         setIsLocked(false);
         setIsCompleted(true);
         lenis?.start();
@@ -188,7 +188,7 @@ export default function BasePortal() {
         const sponsorsSec = document.getElementById("sponsors-section");
         if (sponsorsSec) {
           lenis?.scrollTo(sponsorsSec, {
-            duration: 1.2,
+            duration: 1.0,
             easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t))
           });
         }
@@ -218,13 +218,13 @@ export default function BasePortal() {
           lenis?.start();
           const scrollTarget = (containerRef.current?.offsetTop || 0) - 150;
           window.scrollTo({ top: scrollTarget, behavior: "smooth" });
-        } else if ((e.key === "ArrowDown" || e.key === "Space") && targetProgress.current === 1 && currentVal > 0.9999) {
+        } else if ((e.key === "ArrowDown" || e.key === "Space") && targetProgress.current >= 0.97 && currentVal > 0.96) {
           setIsLocked(false);
           setIsCompleted(true);
           lenis?.start();
           const sponsorsSec = document.getElementById("sponsors-section");
           if (sponsorsSec) {
-            lenis?.scrollTo(sponsorsSec, { duration: 1.2 });
+            lenis?.scrollTo(sponsorsSec, { duration: 1.0 });
           }
         }
       }
@@ -323,7 +323,6 @@ export default function BasePortal() {
           className="sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-center items-center bg-obsidian-950 pointer-events-none"
           style={{ opacity: portalOpacity, scale: portalScale }}
         >
-          {/* Visual Engine Mounting Core */}
           {isReducedMotion ? (
             <PortalRingsFallback progress={smoothProgress} isReducedMotion={true} />
           ) : isMobile ? (
@@ -362,70 +361,79 @@ export default function BasePortal() {
           <div className="absolute top-0 inset-x-0 h-40 bg-gradient-to-b from-obsidian-950 via-obsidian-950/80 to-transparent z-25 pointer-events-none" />
           <div className="absolute bottom-0 inset-x-0 h-40 bg-gradient-to-t from-obsidian-950 via-obsidian-950/80 to-transparent z-25 pointer-events-none" />
 
+          {/* Volumetric Floor Reflection Illusion Plate */}
+          <div 
+            className="absolute bottom-0 inset-x-0 h-48 pointer-events-none z-24 opacity-[0.28] select-none"
+            style={{
+              backgroundImage: "radial-gradient(ellipse at bottom, rgba(124,58,237,0.18) 0%, rgba(5,5,12,0.8) 70%, #05050C 100%)",
+              mixBlendMode: "screen"
+            }}
+          />
+
           {/* Cinematic Narrative Floating Headings Stack */}
           <div className="absolute inset-0 flex items-center justify-center z-30 pointer-events-none">
-            
-            {/* Narrative Prompt Card 1 */}
-            <motion.div
-              className="absolute text-center max-w-xl px-6 flex flex-col items-center"
-              style={{
-                opacity: textOpacity1,
-                y: textY1,
-                willChange: "transform, opacity"
-              }}
-            >
-              <span className="font-mono text-[10px] tracking-[0.3em] text-brand-amber font-semibold uppercase mb-3">
-                Initializing Handshake
-              </span>
-              <h2 className="text-xl md:text-3xl font-extrabold tracking-tight text-white mb-2 font-display">
-                DELVING DEEPER
-              </h2>
-              <p className="text-xs md:text-sm text-obsidian-400 font-mono tracking-wide leading-relaxed">
-                Establishing a high-fidelity consensus channel to synthesize computing protocols. Prepare for synchronization.
-              </p>
-            </motion.div>
+              
+              {/* Narrative Prompt Card 1 */}
+              <motion.div
+                className="absolute text-center max-w-xl px-6 flex flex-col items-center"
+                style={{
+                  opacity: textOpacity1,
+                  y: textY1,
+                  willChange: "transform, opacity"
+                }}
+              >
+                <span className="font-mono text-[10px] tracking-[0.3em] text-brand-amber font-semibold uppercase mb-3">
+                  Initializing Handshake
+                </span>
+                <h2 className="text-xl md:text-3xl font-extrabold tracking-tight text-white mb-2 font-display">
+                  DELVING DEEPER
+                </h2>
+                <p className="text-xs md:text-sm text-obsidian-400 font-mono tracking-wide leading-relaxed">
+                  Establishing a high-fidelity consensus channel to synthesize computing protocols. Prepare for synchronization.
+                </p>
+              </motion.div>
 
-            {/* Narrative Prompt Card 2 */}
-            <motion.div
-              className="absolute text-center max-w-xl px-6 flex flex-col items-center"
-              style={{
-                opacity: textOpacity2,
-                y: textY2,
-                willChange: "transform, opacity"
-              }}
-            >
-              <span className="font-mono text-[10px] tracking-[0.3em] text-brand-violet font-semibold uppercase mb-3">
-                Grid Compiling
-              </span>
-              <h2 className="text-xl md:text-3xl font-extrabold tracking-tight text-white mb-2 font-display">
-                TRANSLATING ECOSYSTEMS
-              </h2>
-              <p className="text-xs md:text-sm text-obsidian-400 font-mono tracking-wide leading-relaxed">
-                Consensus packets validated. Structural vector grids are converging to reveal the foundation pillars.
-              </p>
-            </motion.div>
+              {/* Narrative Prompt Card 2 */}
+              <motion.div
+                className="absolute text-center max-w-xl px-6 flex flex-col items-center"
+                style={{
+                  opacity: textOpacity2,
+                  y: textY2,
+                  willChange: "transform, opacity"
+                }}
+              >
+                <span className="font-mono text-[10px] tracking-[0.3em] text-brand-violet font-semibold uppercase mb-3">
+                  Grid Compiling
+                </span>
+                <h2 className="text-xl md:text-3xl font-extrabold tracking-tight text-white mb-2 font-display">
+                  TRANSLATING ECOSYSTEMS
+                </h2>
+                <p className="text-xs md:text-sm text-obsidian-400 font-mono tracking-wide leading-relaxed">
+                  Consensus packets validated. Structural vector grids are converging to reveal the foundation pillars.
+                </p>
+              </motion.div>
 
-            {/* Narrative Prompt Card 3 */}
-            <motion.div
-              className="absolute text-center max-w-xl px-6 flex flex-col items-center"
-              style={{
-                opacity: textOpacity3,
-                y: textY3,
-                willChange: "transform, opacity"
-              }}
-            >
-              <span className="font-mono text-[10px] tracking-[0.3em] text-brand-amber font-semibold uppercase mb-3">
-                Gateways Aligned
-              </span>
-              <h2 className="text-xl md:text-3xl font-extrabold tracking-tight text-white mb-2 font-display">
-                WELCOME TO THE SYNAPSE
-              </h2>
-              <p className="text-xs md:text-sm text-obsidian-400 font-mono tracking-wide leading-relaxed">
-                Visual portals aligned. Emerging into the core sponsor network ecosystem. Ready for launch.
-              </p>
-            </motion.div>
+              {/* Narrative Prompt Card 3 */}
+              <motion.div
+                className="absolute text-center max-w-xl px-6 flex flex-col items-center"
+                style={{
+                  opacity: textOpacity3,
+                  y: textY3,
+                  willChange: "transform, opacity"
+                }}
+              >
+                <span className="font-mono text-[10px] tracking-[0.3em] text-brand-amber font-semibold uppercase mb-3">
+                  Gateways Aligned
+                </span>
+                <h2 className="text-xl md:text-3xl font-extrabold tracking-tight text-white mb-2 font-display">
+                  WELCOME TO THE SYNAPSE
+                </h2>
+                <p className="text-xs md:text-sm text-obsidian-400 font-mono tracking-wide leading-relaxed">
+                  Visual portals aligned. Emerging into the core sponsor network ecosystem. Ready for launch.
+                </p>
+              </motion.div>
 
-          </div>
+            </div>
 
           {/* Development Audit HUD - Activated with Shift + D */}
           {isDebugMode && (
