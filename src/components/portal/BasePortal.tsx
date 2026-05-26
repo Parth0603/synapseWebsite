@@ -1,433 +1,378 @@
 "use client";
 
 import React, { useRef, useState, useEffect } from "react";
-import { motion, useScroll, useTransform, useSpring, useMotionValue } from "framer-motion";
+import {
+  motion,
+  useScroll,
+  useSpring,
+  useMotionValue,
+  useTransform,
+} from "framer-motion";
 import { useLenis } from "lenis/react";
 import dynamic from "next/dynamic";
 import PortalRingsFallback from "./PortalRingsFallback";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 
-// Dynamically import PortalCanvas with ssr: false to prevent hydration errors
 const PortalCanvas = dynamic(() => import("./PortalCanvas"), {
   ssr: false,
   loading: () => (
     <div className="absolute inset-0 bg-obsidian-950 flex flex-col items-center justify-center z-20">
       <div className="w-12 h-12 rounded-full border border-brand-violet/30 border-t-brand-violet animate-spin mb-4" />
       <span className="font-mono text-xs tracking-widest text-brand-violet/60 uppercase animate-pulse">
-        CALIBRATING COGNITIVE TRANSMISSION CORE...
+        CALIBRATING TRANSMISSION CORE...
       </span>
     </div>
-  )
+  ),
 });
 
 export default function BasePortal() {
   const containerRef = useRef<HTMLDivElement>(null);
   const lenis = useLenis();
-  
+  const lenisRef = useRef<typeof lenis | null>(null);
+  useEffect(() => { lenisRef.current = lenis; });
+
   const [mounted, setMounted] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [isReducedMotion, setIsReducedMotion] = useState(false);
   const [isDebugMode, setIsDebugMode] = useState(false);
-  const [isLocked, setIsLocked] = useState(false);
-  const [isCompleted, setIsCompleted] = useState(false);
 
-  // Reference to track real-time scroll direction
-  const lastScrollYProgress = useRef(0);
-  // High-precision target progress accumulator for linear interpolation (LERP)
-  const targetProgress = useRef(0);
-
-  // Monitor raw scroll progress of the sticky section container track
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start start", "end end"]
+    offset: ["start start", "end end"],
   });
 
-  // Interactive, physics-smoothed progress driving all portal animations
   const progressValue = useMotionValue(0);
-  const smoothProgress = useSpring(progressValue, {
-    damping: 40,
-    stiffness: 180,
-    mass: 0.8
-  });
+  const smoothProgress = useSpring(progressValue, { damping: 38, stiffness: 220, mass: 0.5 });
 
-  // Combined Single Elegant Narrative Block (reveals at 0.10, dissolves at 0.82)
-  const textOpacity = useTransform(smoothProgress, [0.0, 0.12, 0.80, 0.86], [0, 1, 1, 0]);
-  const textY = useTransform(smoothProgress, [0.0, 0.12, 0.80, 0.86], [20, 0, 0, -20]);
+  const textOpacity = useSpring(
+    useTransform(smoothProgress, [0.0, 0.12, 0.45, 0.55], [0, 1, 1, 0]),
+    { damping: 40, stiffness: 260 }
+  );
+  const textY = useSpring(
+    useTransform(smoothProgress, [0.0, 0.12, 0.45, 0.55], [15, 0, 0, -15]),
+    { damping: 40, stiffness: 260 }
+  );
 
-  // Global Blueprint HUD border opacity transform
-  const hudOpacity = useTransform(smoothProgress, [0, 0.15, 0.8, 0.88], [0, 0.28, 0.28, 0]);
-
-  // Symmetrical Exit Cross-Fade: Portal fades and expands slightly as exit approach concludes (0.85 to 0.98)
-  const portalOpacity = useTransform(smoothProgress, [0.85, 0.98], [1, 0]);
-  const portalScale = useTransform(smoothProgress, [0.85, 0.98], [1, 1.03]);
-
-  // Synchronize progressValue in mobile or reduced motion mode
   useEffect(() => {
-    if (!mounted) return;
-    
-    if (isMobile || isReducedMotion) {
-      const unsubscribe = scrollYProgress.on("change", (v) => {
-        progressValue.set(v);
+    if (typeof window === "undefined") return;
+
+    // ─── State ───────────────────────────────────────────────────────────────
+    let isLocked = false;
+    let isCompleted = false;   // true after forward animation finishes
+    let lockDir: "forward" | "backward" = "forward";
+    let targetProg = 0;
+    let lastProg = 0;
+    let rafId: number | null = null;
+    let isSnapping = false;
+
+    // ─── RAF lerp ────────────────────────────────────────────────────────────
+    const startRaf = () => {
+      if (rafId !== null) return;
+      const tick = () => {
+        const cur = progressValue.get();
+        const diff = targetProg - cur;
+        progressValue.set(Math.abs(diff) > 0.0001 ? cur + diff * 0.14 : targetProg);
+        rafId = requestAnimationFrame(tick);
+      };
+      rafId = requestAnimationFrame(tick);
+    };
+    const stopRaf = () => {
+      if (rafId !== null) { cancelAnimationFrame(rafId); rafId = null; }
+    };
+
+    // ─── Section geometry helpers ─────────────────────────────────────────────
+    const stickyBottom = () =>
+      (containerRef.current?.offsetTop ?? 0) +
+      (containerRef.current?.offsetHeight ?? 0) -
+      window.innerHeight;
+
+    const portalBottom = () =>
+      (containerRef.current?.offsetTop ?? 0) +
+      (containerRef.current?.offsetHeight ?? 0);
+
+    // ─── Exits ───────────────────────────────────────────────────────────────
+    const exitForward = () => {
+      if (!isLocked) return;
+      isLocked = false;
+      isCompleted = true;
+      stopRaf();
+      progressValue.set(1);
+      targetProg = 1;
+      
+      // Sync Lenis scroll position instantly before starting smooth scroll
+      const targetY = lockDir === "forward" ? (containerRef.current?.offsetTop ?? 0) : stickyBottom();
+      lenisRef.current?.scrollTo(targetY, { immediate: true });
+      
+      lenisRef.current?.start();
+      lenisRef.current?.scrollTo(portalBottom(), {
+        duration: 0.6,
+        easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       });
-      return () => unsubscribe();
-    }
-  }, [mounted, isMobile, isReducedMotion, scrollYProgress, progressValue]);
+    };
 
-  // Bidirectional Scroll Interception & Snap Controller
-  useEffect(() => {
-    if (!mounted || isMobile || isReducedMotion) return;
+    const exitBackward = () => {
+      if (!isLocked) return;
+      isLocked = false;
+      isCompleted = false;
+      stopRaf();
+      progressValue.set(0);
+      targetProg = 0;
+      
+      // Sync Lenis scroll position instantly before starting smooth scroll
+      const targetY = lockDir === "forward" ? (containerRef.current?.offsetTop ?? 0) : stickyBottom();
+      lenisRef.current?.scrollTo(targetY, { immediate: true });
+      
+      lenisRef.current?.start();
+      lenisRef.current?.scrollTo(
+        Math.max(0, (containerRef.current?.offsetTop ?? 0) - 10),
+        { duration: 0.5 }
+      );
+    };
 
-    const handleScrollProgress = (v: number) => {
-      const direction = v > lastScrollYProgress.current ? "down" : "up";
-      lastScrollYProgress.current = v;
+    // ─── Enter lock ──────────────────────────────────────────────────────────
+    const enterLock = (dir: "forward" | "backward") => {
+      if (isLocked) return;
+      isLocked = true;
+      lockDir = dir;
 
-      // Case 1: Scrolling DOWN from Hero into Portal -> Lock scroll and traverse forward
-      if (direction === "down" && v > 0.02 && v < 0.95 && !isLocked && !isCompleted) {
-        setIsLocked(true);
-        lenis?.stop();
-        targetProgress.current = 0;
+      lenisRef.current?.stop();
+
+      const targetY = dir === "forward" ? (containerRef.current?.offsetTop ?? 0) : stickyBottom();
+
+      // Ensure native and Lenis scroll positions are perfectly synced
+      lenisRef.current?.scrollTo(targetY, { immediate: true });
+      window.scrollTo({ top: targetY });
+
+      if (dir === "forward") {
+        targetProg = 0;
         progressValue.set(0);
-        
-        // Perfectly align viewport with the portal sticky block
-        if (containerRef.current) {
-          lenis?.scrollTo(containerRef.current, {
-            duration: 0.5,
-            immediate: false,
-            force: true
-          });
-        }
-      }
-
-      // Case 2: Scrolling UP from Sponsors into Portal -> Lock scroll and traverse backward (replay)
-      if (direction === "up" && v < 0.97 && v > 0.05 && !isLocked && isCompleted) {
-        setIsLocked(true);
-        setIsCompleted(false);
-        lenis?.stop();
-        targetProgress.current = 1.0;
-        progressValue.set(1.0); // Snap animation to end of the corridor in reverse
-        
-        // Perfectly align viewport with the portal sticky block
-        if (containerRef.current) {
-          lenis?.scrollTo(containerRef.current, {
-            duration: 0.5,
-            immediate: false,
-            force: true
-          });
-        }
-      }
-    };
-
-    const unsubscribe = scrollYProgress.on("change", handleScrollProgress);
-    return () => unsubscribe();
-  }, [mounted, isMobile, isReducedMotion, isCompleted, isLocked, lenis, scrollYProgress, progressValue]);
-
-  // Keyboard, mouse wheel, and touch swipe event listeners when portal is locked
-  useEffect(() => {
-    if (!isLocked) return;
-
-    let rafId: number;
-    const lerpFactor = 0.06; // Electromagnetic fluid corridor resistance
-
-    const updateProgress = () => {
-      const current = progressValue.get();
-      const target = targetProgress.current;
-      const diff = target - current;
-
-      if (Math.abs(diff) > 0.00005) {
-        progressValue.set(current + diff * lerpFactor);
-      } else if (current !== target) {
-        progressValue.set(target);
-      }
-
-      rafId = requestAnimationFrame(updateProgress);
-    };
-
-    rafId = requestAnimationFrame(updateProgress);
-
-    const handleWheel = (e: WheelEvent) => {
-      e.preventDefault();
-      
-      let normalizedDelta = e.deltaY;
-      if (Math.abs(e.deltaY) >= 50) {
-        // Physical wheel: damp heavily to prevent big jumps
-        normalizedDelta = Math.sign(e.deltaY) * 12;
       } else {
-        // Trackpad: damp moderately
-        normalizedDelta = e.deltaY * 0.45;
+        // Start backward at 0.75 so portal rings are instantly visible
+        targetProg = 0.75;
+        progressValue.set(0.75);
       }
-      
-      const sensitivity = 0.00055;
-      const delta = normalizedDelta * sensitivity;
-      targetProgress.current = Math.max(0, Math.min(1, targetProgress.current + delta));
 
-      const currentVal = progressValue.get();
-      if (e.deltaY < 0 && targetProgress.current === 0 && currentVal < 0.0001) {
-        // User scrolled UP at progress 0 -> Release scroll upwards to Hero
-        setIsLocked(false);
-        setIsCompleted(false);
-        lenis?.start();
-        
-        // Scroll slightly above the trigger threshold to let the user return to Hero
-        const scrollTarget = (containerRef.current?.offsetTop || 0) - 150;
-        window.scrollTo({ top: scrollTarget, behavior: "smooth" });
-      } else if (e.deltaY > 0 && targetProgress.current >= 0.97 && currentVal > 0.96) {
-        // User scrolled DOWN at progress near completion -> Release scroll downwards to Sponsors
-        setIsLocked(false);
-        setIsCompleted(true);
-        lenis?.start();
-        
-        const sponsorsSec = document.getElementById("sponsors-section");
-        if (sponsorsSec) {
-          lenis?.scrollTo(sponsorsSec, {
-            duration: 1.0,
-            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t))
-          });
+      startRaf();
+    };
+
+    // ─── Wheel handler (capture phase) ───────────────────────────────────────
+    const handleWheel = (e: WheelEvent) => {
+      // Pre-lock: detect backward entry near portal boundary
+      if (!isLocked && isCompleted && e.deltaY < 0) {
+        if (window.scrollY <= portalBottom() + window.innerHeight * 0.8) {
+          e.stopImmediatePropagation();
+          e.preventDefault();
+          enterLock("backward");
+          return;
         }
+        return;
+      }
+
+      // Pre-lock: detect forward entry
+      if (!isLocked && !isCompleted && e.deltaY > 0) {
+        const portalTop = containerRef.current?.offsetTop ?? 0;
+        if (window.scrollY >= portalTop - 50 && window.scrollY <= portalTop + 200) {
+          e.stopImmediatePropagation();
+          e.preventDefault();
+          enterLock("forward");
+          return;
+        }
+        return;
+      }
+
+      // Locked: drive animation
+      if (!isLocked) return;
+      e.stopImmediatePropagation();
+      e.preventDefault();
+
+      const delta = Math.abs(e.deltaY) >= 40 ? Math.sign(e.deltaY) * 22 : e.deltaY * 0.75;
+      targetProg = Math.max(0, Math.min(1, targetProg + delta * 0.0012));
+      const cur = progressValue.get();
+
+      if (lockDir === "forward") {
+        if (e.deltaY > 0 && targetProg >= 0.98 && cur > 0.95) exitForward();
+        if (e.deltaY < 0 && targetProg <= 0 && cur < 0.01) exitBackward();
+      } else {
+        if (e.deltaY < 0 && targetProg <= 0 && cur < 0.01) exitBackward();
+        if (e.deltaY > 0 && targetProg >= 0.98 && cur > 0.95) exitForward();
       }
     };
 
     const handleTouchMove = (e: TouchEvent) => {
-      e.preventDefault();
+      if (isLocked) { e.stopImmediatePropagation(); e.preventDefault(); }
     };
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      const keys = ["ArrowDown", "ArrowUp", "Space", "PageDown", "PageUp"];
-      if (keys.includes(e.key)) {
-        e.preventDefault();
-        
-        const step = 0.08;
-        if (e.key === "ArrowDown" || e.key === "Space" || e.key === "PageDown") {
-          targetProgress.current = Math.min(1, targetProgress.current + step);
-        } else if (e.key === "ArrowUp" || e.key === "PageUp") {
-          targetProgress.current = Math.max(0, targetProgress.current - step);
-        }
+      if (!isLocked) return;
+      const keys = ["ArrowDown", "ArrowUp", " ", "PageDown", "PageUp"];
+      if (!keys.includes(e.key)) return;
+      e.preventDefault();
+      const step = 0.12;
+      const down = e.key === "ArrowDown" || e.key === " " || e.key === "PageDown";
+      targetProg = down ? Math.min(1, targetProg + step) : Math.max(0, targetProg - step);
+      const cur = progressValue.get();
+      if (down && targetProg >= 0.98 && cur > 0.95) exitForward();
+      if (!down && targetProg <= 0 && cur < 0.01) exitBackward();
+    };
 
-        const currentVal = progressValue.get();
-        if (e.key === "ArrowUp" && targetProgress.current === 0 && currentVal < 0.0001) {
-          setIsLocked(false);
-          setIsCompleted(false);
-          lenis?.start();
-          const scrollTarget = (containerRef.current?.offsetTop || 0) - 150;
-          window.scrollTo({ top: scrollTarget, behavior: "smooth" });
-        } else if ((e.key === "ArrowDown" || e.key === "Space") && targetProgress.current >= 0.97 && currentVal > 0.96) {
-          setIsLocked(false);
-          setIsCompleted(true);
-          lenis?.start();
-          const sponsorsSec = document.getElementById("sponsors-section");
-          if (sponsorsSec) {
-            lenis?.scrollTo(sponsorsSec, { duration: 1.0 });
-          }
-        }
+    // ─── Native Scroll Snap-back (Blocks trackpad momentum / inertia scroll) ──────
+    const handleNativeScroll = () => {
+      if (!isLocked) return;
+      if (isSnapping) return;
+
+      const targetY = lockDir === "forward" ? (containerRef.current?.offsetTop ?? 0) : stickyBottom();
+      if (Math.abs(window.scrollY - targetY) > 1) {
+        isSnapping = true;
+        window.scrollTo({ top: targetY });
+        requestAnimationFrame(() => {
+          isSnapping = false;
+        });
       }
     };
 
-    window.addEventListener("wheel", handleWheel, { passive: false });
-    window.addEventListener("touchmove", handleTouchMove, { passive: false });
-    window.addEventListener("keydown", handleKeyDown, { passive: false });
+    window.addEventListener("wheel", handleWheel, { passive: false, capture: true });
+    window.addEventListener("touchmove", handleTouchMove, { passive: false, capture: true });
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("scroll", handleNativeScroll, { passive: false });
+
+    // ─── scrollYProgress observer (Fallback for slow scrolls) ───────────────────
+    const unsubscribe = scrollYProgress.on("change", (v: number) => {
+      const direction = v > lastProg ? "down" : "up";
+      lastProg = v;
+
+      if (v < 0.005 && !isLocked) {
+        isCompleted = false;
+        targetProg = 0;
+        progressValue.set(0);
+        return;
+      }
+
+      // Forward lock fallback
+      if (direction === "down" && v > 0.01 && v < 0.96 && !isLocked && !isCompleted) {
+        enterLock("forward");
+        return;
+      }
+
+      // Backward lock fallback
+      if (direction === "up" && v < 1.0 && v > 0.0 && !isLocked && isCompleted) {
+        enterLock("backward");
+        return;
+      }
+    });
 
     return () => {
-      cancelAnimationFrame(rafId);
-      window.removeEventListener("wheel", handleWheel);
-      window.removeEventListener("touchmove", handleTouchMove);
+      unsubscribe();
+      stopRaf();
+      window.removeEventListener("wheel", handleWheel, { capture: true });
+      window.removeEventListener("touchmove", handleTouchMove, { capture: true });
       window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("scroll", handleNativeScroll);
     };
-  }, [isLocked, lenis, progressValue, isCompleted]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mounted, isMobile, isReducedMotion]);
 
-  // Reset completed state if user scrolls back up to the absolute top of the page
+  // Mobile / reduced-motion: direct sync, no lock
   useEffect(() => {
-    if (!mounted) return;
-    const handleGlobalScroll = () => {
-      const scrollY = window.scrollY;
-      if (scrollY < 100 && isCompleted) {
-        setIsCompleted(false);
-        targetProgress.current = 0;
-        progressValue.set(0);
-      }
-    };
-    window.addEventListener("scroll", handleGlobalScroll);
-    return () => window.removeEventListener("scroll", handleGlobalScroll);
-  }, [mounted, isCompleted, progressValue]);
+    if (!mounted || !(isMobile || isReducedMotion)) return;
+    const unsub = scrollYProgress.on("change", (v: number) => progressValue.set(v));
+    return () => unsub();
+  }, [mounted, isMobile, isReducedMotion, scrollYProgress, progressValue]);
 
-  // Accessibility Skip portal button
-  const handleSkip = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
-    targetProgress.current = 1;
-    progressValue.set(1);
-    setIsLocked(false);
-    setIsCompleted(true);
-    lenis?.start();
-    const sponsorsSec = document.getElementById("sponsors-section");
-    if (sponsorsSec) {
-      lenis?.scrollTo(sponsorsSec, { duration: 0.8 });
-    }
-  };
-
-  // Client side initialization hooks for hydration safety and system audits
   useEffect(() => {
     setMounted(true);
-
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 1024);
+    const onResize = () => setIsMobile(window.innerWidth < 1024);
+    onResize();
+    window.addEventListener("resize", onResize);
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setIsReducedMotion(mq.matches);
+    const onMq = (e: MediaQueryListEvent) => setIsReducedMotion(e.matches);
+    mq.addEventListener("change", onMq);
+    const onDebug = (e: KeyboardEvent) => {
+      if (e.shiftKey && (e.key === "D" || e.key === "d")) setIsDebugMode((p) => !p);
     };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-
-    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setIsReducedMotion(mediaQuery.matches);
-    const handleMotionChange = (e: MediaQueryListEvent) => {
-      setIsReducedMotion(e.matches);
-    };
-    mediaQuery.addEventListener("change", handleMotionChange);
-
-    const handleDebugKeys = (e: KeyboardEvent) => {
-      if (e.shiftKey && (e.key === "D" || e.key === "d")) {
-        setIsDebugMode((prev) => !prev);
-      }
-    };
-    window.addEventListener("keydown", handleDebugKeys);
-
+    window.addEventListener("keydown", onDebug);
     return () => {
-      window.removeEventListener("resize", handleResize);
-      mediaQuery.removeEventListener("change", handleMotionChange);
-      window.removeEventListener("keydown", handleDebugKeys);
+      window.removeEventListener("resize", onResize);
+      mq.removeEventListener("change", onMq);
+      window.removeEventListener("keydown", onDebug);
     };
   }, []);
+
+  const handleSkip = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    progressValue.set(1);
+    lenis?.start();
+    if (containerRef.current) {
+      lenis?.scrollTo(
+        containerRef.current.offsetTop + containerRef.current.offsetHeight,
+        { duration: 0.6 }
+      );
+    }
+  };
 
   return (
     <section
       ref={containerRef}
       id="portal-transition-section"
-      className="relative w-full h-[150vh] bg-obsidian-950 overflow-visible z-35"
-      aria-label="Synapse Grid Portal Traversal"
+      className="relative w-full h-[180vh] bg-obsidian-950 overflow-visible"
+      style={{ zIndex: 35 }}
+      aria-label="Synapse Dimensional Portal"
     >
-      {/* Skip Navigation option for accessibility */}
       <a
         href="#sponsors-section"
         onClick={handleSkip}
         className="sr-only focus:not-sr-only absolute top-4 left-4 bg-brand-violet text-white px-4 py-2 rounded font-mono text-xs z-50 focus:ring focus:ring-brand-amber cursor-pointer"
       >
-        Skip Portal Transition
+        Skip Portal
       </a>
 
-      {mounted && (
-        <motion.div 
-          className="sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-center items-center bg-obsidian-950 pointer-events-none"
-          style={{ opacity: portalOpacity, scale: portalScale }}
+      <div className="sticky top-0 h-screen w-full overflow-hidden bg-obsidian-950">
+        {mounted && !isMobile && !isReducedMotion ? (
+          <ErrorBoundary fallback={<PortalRingsFallback progress={smoothProgress} isReducedMotion={false} />}>
+            <PortalCanvas scrollYProgress={smoothProgress} isMobile={isMobile} />
+          </ErrorBoundary>
+        ) : (
+          <PortalRingsFallback progress={smoothProgress} isReducedMotion={isReducedMotion} />
+        )}
+
+        <div className="absolute inset-0 pointer-events-none select-none" style={{ zIndex: 25, opacity: 0.03, backgroundImage: "linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,0.25) 50%)", backgroundSize: "100% 4px" }} />
+        <div className="absolute top-0 inset-x-0 h-36 pointer-events-none" style={{ zIndex: 26, background: "linear-gradient(to bottom, rgba(5,5,12,1) 0%, rgba(5,5,12,0.5) 60%, transparent 100%)" }} />
+        <div className="absolute bottom-0 inset-x-0 h-36 pointer-events-none" style={{ zIndex: 26, background: "linear-gradient(to top, rgba(5,5,12,0.9) 0%, rgba(5,5,12,0.4) 60%, transparent 100%)" }} />
+
+        <motion.div
+          className="absolute bottom-0 inset-x-0 h-44 pointer-events-none select-none origin-bottom"
+          style={{ zIndex: 24, mixBlendMode: "screen" as const }}
+          animate={{ opacity: [0.2, 0.32, 0.2], scaleY: [1.0, 1.04, 1.0] }}
+          transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut" }}
         >
-          {isReducedMotion ? (
-            <PortalRingsFallback progress={smoothProgress} isReducedMotion={true} />
-          ) : isMobile ? (
-            <PortalRingsFallback progress={smoothProgress} isReducedMotion={false} />
-          ) : (
-            <ErrorBoundary fallback={<PortalRingsFallback progress={smoothProgress} isReducedMotion={false} />}>
-              <PortalCanvas scrollYProgress={smoothProgress} isMobile={isMobile} />
-            </ErrorBoundary>
-          )}
-
-          {/* Global CRT Grid overlay plates mapping depth */}
-          <div 
-            className="absolute inset-0 z-25 pointer-events-none opacity-[0.03] select-none"
-            style={{
-              backgroundImage: "radial-gradient(ellipse at center, rgba(124,58,237,0.15) 0%, transparent 80%), linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,0.25) 50%)",
-              backgroundSize: "100% 100%, 100% 4px"
-            }}
-          />
-
-          {/* Dynamic Static HUD Blueprint borders */}
-          <motion.div 
-            className="absolute inset-x-8 md:inset-x-16 inset-y-12 border border-brand-violet/20 pointer-events-none rounded z-30 flex justify-between p-4"
-            style={{ opacity: hudOpacity }}
-          >
-            <div className="h-full flex flex-col justify-between text-[9px] font-mono text-brand-violet/60">
-              <span>[ SYS.CORRIDOR_V.1.0 ]</span>
-              <span>[ AXIS_Z.TRAVERSAL ]</span>
-            </div>
-            <div className="h-full flex flex-col justify-between text-[9px] font-mono text-brand-violet/60 text-right">
-              <span>[ SYNERGIES_LOCKED ]</span>
-              <span>[ DEPTH_ALIGNMENT ]</span>
-            </div>
-          </motion.div>
-
-          {/* Atmospheric Depth Shadows / Linear Gradient Fog sheets */}
-          <div className="absolute top-0 inset-x-0 h-40 bg-gradient-to-b from-obsidian-950 via-obsidian-950/80 to-transparent z-25 pointer-events-none" />
-          <div className="absolute bottom-0 inset-x-0 h-40 bg-gradient-to-t from-obsidian-950 via-obsidian-950/80 to-transparent z-25 pointer-events-none" />
-
-          {/* Volumetric Floor Reflection Illusion Plate with Breathing animation */}
-          <motion.div 
-            className="absolute bottom-0 inset-x-0 h-48 pointer-events-none z-24 select-none origin-bottom"
-            style={{
-              backgroundImage: "radial-gradient(ellipse at bottom, rgba(124,58,237,0.22) 0%, rgba(5,5,12,0.8) 70%, #05050C 100%)",
-              mixBlendMode: "screen"
-            }}
-            animate={{
-              opacity: [0.25, 0.38, 0.25],
-              scaleY: [1.0, 1.05, 1.0]
-            }}
-            transition={{
-              duration: 6.0,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-          />
-
-          {/* Top Entrance Environmental Neon Light Spill with slow drift */}
-          <motion.div 
-            className="absolute top-0 inset-x-0 h-48 pointer-events-none z-24 select-none origin-top"
-            style={{
-              backgroundImage: "radial-gradient(ellipse at top, rgba(139,92,246,0.24) 0%, rgba(5,5,12,0.8) 70%, #05050C 100%)",
-              mixBlendMode: "screen"
-            }}
-            animate={{
-              opacity: [0.18, 0.28, 0.18],
-              y: [-2, 2, -2]
-            }}
-            transition={{
-              duration: 8.0,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-          />
-
-          {/* Cinematic Narrative Floating Headings Stack */}
-          <div className="absolute inset-0 flex items-center justify-center z-30 pointer-events-none">
-              
-              {/* Single Unified Elegant Narrative Card */}
-              <motion.div
-                className="absolute text-center max-w-xl px-6 flex flex-col items-center"
-                style={{
-                  opacity: textOpacity,
-                  y: textY,
-                  willChange: "transform, opacity"
-                }}
-              >
-                <span className="font-mono text-[9px] tracking-[0.35em] text-brand-amber font-semibold uppercase mb-3">
-                  SYNAPSE CONVERGENCE
-                </span>
-                <h2 className="text-xl md:text-3xl font-extrabold tracking-tight text-white mb-3 font-display">
-                  TRAVERSING THE CORE
-                </h2>
-                <p className="text-xs md:text-sm text-obsidian-400 font-mono tracking-wide leading-relaxed max-w-md">
-                  Bridging consensus networks to synthesize computing protocols. Welcome to the new ecosystem.
-                </p>
-              </motion.div>
-
-          </div>
-
-          {/* Development Audit HUD - Activated with Shift + D */}
-          {isDebugMode && (
-            <div className="absolute top-4 right-4 bg-black/85 border border-dashed border-red-500 rounded p-4 font-mono text-[10px] text-red-400 z-50 leading-relaxed shadow-xl pointer-events-auto">
-              <h3 className="font-bold border-b border-red-500/40 pb-1 mb-2">SYNAPSE PORTAL DIAGNOSTICS</h3>
-              <p>PORTAL_PROGRESS: {progressValue.get().toFixed(4)}</p>
-              <p>SMOOTH_SPRING_VAL: {smoothProgress.get().toFixed(4)}</p>
-              <p>LOCK_STATE: {isLocked ? "LOCKED" : "UNLOCKED"}</p>
-              <p>COMPLETED_STATE: {isCompleted ? "TRUE" : "FALSE"}</p>
-              <p>VIEWPORT: {isMobile ? "MOBILE_COLLAPSED" : "DESKTOP_FULL"}</p>
-              <p>REDUCED_MOTION: {isReducedMotion ? "ACTIVE" : "INACTIVE"}</p>
-              <p className="text-gray-400 mt-2 italic text-[9px]">Press Shift + D to close</p>
-            </div>
-          )}
+          <div className="w-full h-full" style={{ background: "radial-gradient(ellipse at bottom, rgba(124,58,237,0.20) 0%, rgba(5,5,12,0.7) 65%, transparent 100%)" }} />
         </motion.div>
-      )}
+
+        <motion.div className="absolute inset-x-8 md:inset-x-14 inset-y-10 border border-brand-violet/15 pointer-events-none rounded flex justify-between p-3" style={{ zIndex: 30, opacity: 0.25 }}>
+          <div className="h-full flex flex-col justify-between text-[8px] font-mono text-brand-violet/50">
+            <span>[ SYS.CORRIDOR_V.1 ]</span><span>[ AXIS_Z ]</span>
+          </div>
+          <div className="h-full flex flex-col justify-between text-[8px] font-mono text-brand-violet/50 text-right">
+            <span>[ NODE_SYNC ]</span><span>[ DEPTH_LOCK ]</span>
+          </div>
+        </motion.div>
+
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none" style={{ zIndex: 32 }}>
+          <motion.div className="text-center max-w-lg px-6 flex flex-col items-center" style={{ opacity: textOpacity, y: textY, willChange: "transform, opacity" }}>
+            <span className="font-mono text-[9px] tracking-[0.38em] text-brand-amber font-semibold uppercase mb-2">SYNAPSE CONVERGENCE</span>
+            <h2 className="text-2xl md:text-4xl font-extrabold tracking-tight text-white font-display mb-2">TRAVERSING THE CORE</h2>
+          </motion.div>
+        </div>
+
+        {isDebugMode && (
+          <div className="absolute top-4 right-4 bg-black/85 border border-dashed border-red-500 rounded p-4 font-mono text-[10px] text-red-400 leading-relaxed shadow-xl pointer-events-auto" style={{ zIndex: 50 }}>
+            <h3 className="font-bold border-b border-red-500/40 pb-1 mb-2">PORTAL DEBUG</h3>
+            <p>PROGRESS: {smoothProgress.get().toFixed(3)}</p>
+            <p>MOBILE: {isMobile ? "YES" : "NO"}</p>
+            <p className="text-gray-400 mt-2 italic text-[9px]">Shift+D to toggle</p>
+          </div>
+        )}
+      </div>
     </section>
   );
 }

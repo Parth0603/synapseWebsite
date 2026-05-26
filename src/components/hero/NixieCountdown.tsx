@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface TimeRemaining {
   days: string;
@@ -13,103 +13,132 @@ interface TimeRemaining {
 export function NixieCountdown() {
   const [mounted, setMounted] = useState(false);
   const [timeLeft, setTimeLeft] = useState<TimeRemaining>({
-    days: "00",
-    hours: "00",
-    minutes: "00",
+    days: "28",
+    hours: "14",
+    minutes: "06",
     seconds: "00",
   });
 
   useEffect(() => {
     setMounted(true);
-    
-    // Set fixed future launch date: June 20, 2026 00:00:00 UTC
     const targetDate = new Date("2026-06-20T00:00:00Z").getTime();
 
     const calculateTime = () => {
-      const now = new Date().getTime();
-      const difference = targetDate - now;
-
-      if (difference <= 0) {
+      const now = Date.now();
+      const diff = targetDate - now;
+      if (diff <= 0) {
         setTimeLeft({ days: "00", hours: "00", minutes: "00", seconds: "00" });
         return;
       }
-
-      const d = Math.floor(difference / (1000 * 60 * 60 * 24));
-      const h = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const m = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-      const s = Math.floor((difference % (1000 * 60)) / 1000);
-
       setTimeLeft({
-        days: d.toString().padStart(2, "0"),
-        hours: h.toString().padStart(2, "0"),
-        minutes: m.toString().padStart(2, "0"),
-        seconds: s.toString().padStart(2, "0"),
+        days:    Math.floor(diff / 86400000).toString().padStart(2, "0"),
+        hours:   Math.floor((diff % 86400000) / 3600000).toString().padStart(2, "0"),
+        minutes: Math.floor((diff % 3600000) / 60000).toString().padStart(2, "0"),
+        seconds: Math.floor((diff % 60000) / 1000).toString().padStart(2, "0"),
       });
     };
 
     calculateTime();
     const interval = setInterval(calculateTime, 1000);
-
     return () => clearInterval(interval);
   }, []);
 
-  const tubeVariants = {
-    hidden: { opacity: 0, scale: 0.94, y: 8 },
-    visible: { 
-      opacity: 1, 
-      scale: 1, 
-      y: 0,
-      transition: {
-        type: "spring" as const,
-        stiffness: 90,
-        damping: 18,
-        delay: 0.45
-      }
-    }
-  };
-
-  const renderNixieTube = (value: string, label: string) => {
-    return (
-      <div className="flex flex-col items-center">
-        {/* Filament Glass Capsule */}
-        <div className="relative w-[48px] h-[72px] sm:w-16 sm:h-24 md:w-20 md:h-28 rounded-[12px] glass-panel border border-brand-amber/20 flex flex-col justify-center items-center shadow-[inset_0_0_20px_rgba(249,115,22,0.05),0_0_15px_rgba(249,115,22,0.05)] select-none">
-          {/* Internal filament grids */}
-          <div className="absolute inset-x-2 inset-y-4 border-[0.5px] border-white/5 rounded-[6px] pointer-events-none" />
-          
-          {/* Monospace amber neon numbers */}
-          <span 
-            className="text-2xl sm:text-3xl md:text-5xl font-mono font-bold tracking-tight text-brand-amber filter drop-shadow-[0_0_8px_rgba(249,115,22,0.7)]"
-            style={{ fontVariantNumeric: "tabular-nums" }}
-          >
-            {mounted ? value : "--"}
-          </span>
-
-          {/* Filament underlight glow spot */}
-          <div className="absolute bottom-1 w-1/3 h-[2px] bg-brand-amber blur-[1px] opacity-40" />
-        </div>
-        
-        {/* Tube Label */}
-        <span className="mt-3 text-[10px] font-mono tracking-[0.2em] text-slate-500 uppercase">
-          {label}
-        </span>
-      </div>
-    );
-  };
-
   return (
     <motion.div
-      variants={tubeVariants}
-      initial="hidden"
-      animate="visible"
-      className="flex justify-center items-center gap-3 sm:gap-4 md:gap-6 mt-8 mb-10 py-2 z-40 relative max-w-lg mx-auto"
+      initial={{ opacity: 0, y: 14 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ type: "spring", stiffness: 80, damping: 20, delay: 0.5 }}
+      className="flex flex-col items-center gap-3 mt-10 mb-8 relative z-40"
     >
-      {renderNixieTube(timeLeft.days, "Days")}
-      <span className="text-2xl md:text-3xl font-mono text-brand-amber/40 animate-pulse relative -top-3">:</span>
-      {renderNixieTube(timeLeft.hours, "Hours")}
-      <span className="text-2xl md:text-3xl font-mono text-brand-amber/40 animate-pulse relative -top-3">:</span>
-      {renderNixieTube(timeLeft.minutes, "Mins")}
-      <span className="text-2xl md:text-3xl font-mono text-brand-amber/40 animate-pulse relative -top-3">:</span>
-      {renderNixieTube(timeLeft.seconds, "Secs")}
+      <span className="font-mono text-[9px] tracking-[0.38em] text-slate-600 uppercase select-none">
+        REGISTRATION GATE CLOSING IN
+      </span>
+
+      {/* Tube row */}
+      <div className="flex items-center gap-2 sm:gap-3">
+        <NixieTube value={mounted ? timeLeft.days    : "28"} label="DAYS"    />
+        <Separator />
+        <NixieTube value={mounted ? timeLeft.hours   : "14"} label="HRS"     />
+        <Separator />
+        <NixieTube value={mounted ? timeLeft.minutes : "06"} label="MIN"     />
+        <Separator />
+        <NixieTube value={mounted ? timeLeft.seconds : "00"} label="SEC"     />
+      </div>
     </motion.div>
+  );
+}
+
+// ── Individual Nixie tube ────────────────────
+function NixieTube({ value, label }: { value: string; label: string }) {
+  return (
+    <div className="flex flex-col items-center gap-2">
+      {/* Glass capsule */}
+      <div
+        className="relative flex items-center justify-center select-none"
+        style={{
+          width: "clamp(44px, 8vw, 72px)",
+          height: "clamp(64px, 11vw, 96px)",
+          borderRadius: 10,
+          background: "linear-gradient(160deg, rgba(249,115,22,0.04) 0%, rgba(5,5,12,0.85) 100%)",
+          border: "1px solid rgba(249,115,22,0.18)",
+          boxShadow: "inset 0 0 18px rgba(249,115,22,0.04), 0 0 12px rgba(249,115,22,0.04)",
+        }}
+      >
+        {/* Inner scan-line overlay */}
+        <div
+          className="absolute inset-0 pointer-events-none rounded-[9px]"
+          style={{
+            backgroundImage: "linear-gradient(rgba(255,255,255,0) 50%, rgba(0,0,0,0.12) 50%)",
+            backgroundSize: "100% 4px",
+            opacity: 0.35,
+          }}
+        />
+
+        {/* Digit — animates on change */}
+        <AnimatePresence mode="wait">
+          <motion.span
+            key={value}
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 4 }}
+            transition={{ duration: 0.15, ease: "easeInOut" }}
+            className="font-mono font-bold tabular-nums relative z-10"
+            style={{
+              fontSize: "clamp(1.4rem, 4.5vw, 2.8rem)",
+              color: "hsl(32,95%,62%)",
+              textShadow: "0 0 10px hsla(32,95%,62%,0.65), 0 0 24px hsla(32,95%,62%,0.20)",
+              letterSpacing: "-0.02em",
+            }}
+          >
+            {value}
+          </motion.span>
+        </AnimatePresence>
+
+        {/* Bottom filament glow */}
+        <div
+          className="absolute bottom-1.5 w-1/3 h-[2px] rounded-full pointer-events-none"
+          style={{ background: "hsla(32,95%,62%,0.5)", filter: "blur(2px)" }}
+        />
+      </div>
+
+      {/* Label */}
+      <span className="font-mono text-[8px] tracking-[0.25em] text-slate-600 uppercase select-none">
+        {label}
+      </span>
+    </div>
+  );
+}
+
+// ── Pulsing colon separator ─────────────────
+function Separator() {
+  return (
+    <motion.span
+      className="font-mono font-bold text-brand-amber/25 select-none"
+      style={{ fontSize: "clamp(1.2rem, 3vw, 2rem)", marginBottom: "1.2rem" }}
+      animate={{ opacity: [0.25, 0.65, 0.25] }}
+      transition={{ duration: 1.2, repeat: Infinity, ease: "easeInOut" }}
+    >
+      :
+    </motion.span>
   );
 }

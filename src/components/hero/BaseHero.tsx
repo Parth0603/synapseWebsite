@@ -4,14 +4,12 @@ import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { SectionWrapper } from "@/components/ui/SectionWrapper";
-import { AtmosphericGlow } from "@/components/ui/AtmosphericGlow";
 import { CentralStack } from "./CentralStack";
 import { NixieCountdown } from "./NixieCountdown";
 import { CTAButtonGroup } from "./CTAButtonGroup";
 import { SponsorTrustStrip } from "./SponsorTrustStrip";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 
-// Lazy-load Canvas Particles to prevent hydration lags and protect early bundle sizes
 const CanvasParticles = dynamic(
   () => import("./CanvasParticles").then((mod) => mod.CanvasParticles),
   { ssr: false }
@@ -21,130 +19,137 @@ export function BaseHero() {
   const [mounted, setMounted] = useState(false);
   const { scrollY } = useScroll();
 
-  // Deceleration-based scroll transforms for parallax atmospheric shifts
-  const atmosphereOpacity = useTransform(scrollY, [0, 600], [1, 0]);
-  const atmosphereScale = useTransform(scrollY, [0, 600], [1, 0.95]);
-  const contentTranslateY = useTransform(scrollY, [0, 600], [0, 80]);
+  // Single scroll transform for content parallax — atmosphere divs are static (no scroll binding = no recalc)
+  const contentY = useTransform(scrollY, [0, 500], [0, 55]);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  useEffect(() => { setMounted(true); }, []);
 
   return (
-    <SectionWrapper id="hero" showDividers={true} className="min-h-screen flex flex-col justify-between py-16 md:py-24 overflow-hidden relative selection:bg-brand-violet/30 selection:text-white">
-      {/* ── LAYER 10: TERMINAL BASE (OBSIDIAN VOID & SUB-PIXEL NOISE GRAIN) ── */}
-      <div className="absolute inset-0 bg-obsidian-950 noise-overlay opacity-40 pointer-events-none z-[10]" />
-      
-      {/* Blueprint Coordinate Outlines */}
-      <div className="absolute inset-0 border border-white/[0.02] pointer-events-none z-[11] hidden md:block">
-        <div className="absolute top-12 left-12 w-6 h-6 border-t border-l border-white/10" />
-        <div className="absolute top-12 right-12 w-6 h-6 border-t border-r border-white/10" />
-        <div className="absolute bottom-12 left-12 w-6 h-6 border-b border-l border-white/10" />
-        <div className="absolute bottom-12 right-12 w-6 h-6 border-b border-r border-white/10" />
-        
-        {/* Symmetrical framing guides */}
-        <div className="absolute left-[12%] inset-y-0 w-[1px] bg-white/[0.01]" />
-        <div className="absolute right-[12%] inset-y-0 w-[1px] bg-white/[0.01]" />
+    <SectionWrapper
+      id="hero"
+      showDividers={false}
+      className="min-h-screen flex flex-col justify-between overflow-hidden relative selection:bg-brand-violet/30 selection:text-white"
+    >
+
+      {/* ── BASE: Deep obsidian void ── */}
+      <div className="absolute inset-0 bg-[#040409] pointer-events-none" style={{ zIndex: 5 }} />
+
+      {/* ── LAYER 15: Blueprint corner framing (desktop only, pure CSS — zero cost) ── */}
+      <div className="absolute inset-0 pointer-events-none hidden md:block" style={{ zIndex: 15 }} aria-hidden="true">
+        <div className="absolute top-8 left-8 w-6 h-6 border-t border-l border-white/[0.05]" />
+        <div className="absolute top-8 right-8 w-6 h-6 border-t border-r border-white/[0.05]" />
+        <div className="absolute bottom-8 left-8 w-6 h-6 border-b border-l border-white/[0.05]" />
+        <div className="absolute bottom-8 right-8 w-6 h-6 border-b border-r border-white/[0.05]" />
       </div>
 
-      {/* ── LAYER 20: ENERGY MESH (RADIAL MESH GLOWS WITH ACCENT GRADIENTS) ── */}
-      <motion.div 
-        style={{ opacity: atmosphereOpacity, scale: atmosphereScale }}
-        className="absolute inset-0 pointer-events-none z-[20] overflow-hidden"
-      >
-        {/* Top-Centered Neural Violet Spotlight (illuminates titles) */}
-        <AtmosphericGlow
-          color="violet"
-          intensity="high"
-          className="top-[-10%] left-1/2 -translate-x-1/2 w-[900px] h-[550px] md:w-[1300px] md:h-[650px] opacity-60 mix-blend-screen"
+      {/* ── LAYER 20: Static atmospheric gradients ──────────────────────────────
+          PERFORMANCE NOTE: All blur() filters removed — radial-gradient naturally
+          produces soft edges and is GPU-composited for free as a static layer.
+          NO filter, NO animation, NO mixBlendMode = zero render cost per frame.
+      ──────────────────────────────────────────────────────────────────────── */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 20 }} aria-hidden="true">
+
+        {/* Primary violet crown — illuminates title from above */}
+        <div
+          className="absolute pointer-events-none"
+          style={{
+            top: "-20%",
+            left: "50%",
+            transform: "translateX(-50%)",
+            width: "min(1200px, 130vw)",
+            height: "min(650px, 75vh)",
+            background: "radial-gradient(ellipse at 50% 0%, hsla(271,80%,62%,0.18) 0%, hsla(271,80%,62%,0.06) 45%, transparent 72%)",
+          }}
         />
 
-        {/* Mid-level auxiliary Amber Spotlight (bridges elements) */}
-        <AtmosphericGlow
-          color="amber"
-          intensity="medium"
-          className="top-[35%] left-[20%] w-[500px] h-[400px] opacity-25 mix-blend-screen"
+        {/* Left amber warmth accent */}
+        <div
+          className="absolute pointer-events-none"
+          style={{
+            top: "20%",
+            left: "-5%",
+            width: "min(550px, 50vw)",
+            height: "min(420px, 45vh)",
+            background: "radial-gradient(ellipse at 50% 50%, hsla(25,90%,58%,0.09) 0%, transparent 70%)",
+          }}
         />
-        
-        {/* Bottom-right Crypto Amber Spotlight (balances deep contrast voids) */}
-        <AtmosphericGlow
-          color="amber"
-          intensity="low"
-          className="bottom-[-10%] right-[10%] w-[600px] h-[450px] opacity-20 mix-blend-screen"
-        />
-      </motion.div>
 
-      {/* ── LAYER 30: ATMOSPHERE DRIFT (PARTICLES SIMULATOR) ── */}
+        {/* Right-side depth accent */}
+        <div
+          className="absolute pointer-events-none"
+          style={{
+            bottom: "5%",
+            right: "-5%",
+            width: "min(500px, 45vw)",
+            height: "min(380px, 40vh)",
+            background: "radial-gradient(ellipse at 50% 50%, hsla(25,90%,58%,0.06) 0%, transparent 70%)",
+          }}
+        />
+      </div>
+
+      {/* ── LAYER 30: Canvas particle field (lazy, ssr:false) ── */}
       <ErrorBoundary>
         {mounted && <CanvasParticles />}
       </ErrorBoundary>
 
-      {/* ── LAYER 40 & 50: CONTENT INFRASTRUCTURE (TYPOGRAPHY, CTAS, CONTROLS) ── */}
-      <motion.div 
-        style={{ y: contentTranslateY }}
-        className="flex-grow flex flex-col justify-center items-center relative z-[45] py-8 w-full"
+      {/* ── LAYER 35: Edge vignette — cheap CSS radial, static ── */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          zIndex: 35,
+          background: "radial-gradient(ellipse at 50% 45%, transparent 35%, rgba(4,4,9,0.70) 100%)",
+        }}
+        aria-hidden="true"
+      />
+
+      {/* ── LAYER 45: Content — single motion.div with one scroll binding ── */}
+      <motion.div
+        style={{ y: contentY, zIndex: 45 }}
+        className="flex-grow flex flex-col justify-center items-center relative w-full pt-4 pb-6"
       >
-        {/* Typography stack */}
         <CentralStack />
-
-        {/* Urgency countdown panels */}
         <NixieCountdown />
-
-        {/* Tactical CTAs buttons */}
         <CTAButtonGroup />
-
-        {/* Subtle, highly visible animated scroll cue */}
-        <motion.div
-          initial={{ opacity: 0, y: -5 }}
-          animate={{ opacity: 0.6, y: [0, 8, 0] }}
-          transition={{
-            duration: 2.2,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 1.5,
-          }}
-          className="mt-8 flex flex-col items-center gap-2 cursor-pointer group"
-          onClick={() => {
-            const nextSec = document.getElementById("portal-transition-section") || document.getElementById("tracks-section");
-            if (nextSec) {
-              nextSec.scrollIntoView({ behavior: "smooth" });
-            } else {
-              window.scrollTo({ top: window.innerHeight, behavior: "smooth" });
-            }
-          }}
-          aria-label="Scroll down to explore portal"
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              window.scrollTo({ top: window.innerHeight, behavior: "smooth" });
-            }
-          }}
-        >
-          <span className="text-[9px] font-mono tracking-[0.25em] text-slate-500 group-hover:text-brand-violet transition-colors duration-300">
-            SCROLL TO EXPLORE
-          </span>
-          <svg
-            className="w-4 h-4 text-slate-500 group-hover:text-brand-violet transition-colors duration-300"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M19 14l-7 7m0 0l-7-7m7 7V3"
-            />
-          </svg>
-        </motion.div>
+        <ScrollInvitation />
       </motion.div>
 
-      {/* ── LAYER 50 Grounding Ticker Marquee ── */}
-      <div className="w-full relative z-[50]">
+      {/* ── LAYER 50: Trust strip ticker ── */}
+      <div className="w-full relative" style={{ zIndex: 50 }}>
         <SponsorTrustStrip />
       </div>
     </SectionWrapper>
+  );
+}
+
+// ─────────────────────────────────────────────
+// Scroll Invitation — static animation, minimal
+// ─────────────────────────────────────────────
+function ScrollInvitation() {
+  return (
+    <motion.button
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.8, delay: 2.0, ease: "easeOut" }}
+      className="mt-8 flex flex-col items-center gap-2.5 cursor-pointer group focus:outline-none"
+      onClick={() => {
+        const el = document.getElementById("portal-transition-section");
+        if (el) el.scrollIntoView({ behavior: "smooth" });
+        else window.scrollTo({ top: window.innerHeight, behavior: "smooth" });
+      }}
+      aria-label="Scroll down to enter the portal"
+    >
+      <span className="font-mono text-[8px] tracking-[0.35em] text-slate-600 group-hover:text-brand-violet/70 transition-colors duration-400 uppercase select-none">
+        ENTER PORTAL CORE
+      </span>
+      {/* Simple CSS chevron using border — zero JS animation cost */}
+      <div className="flex flex-col items-center gap-[5px] opacity-40 group-hover:opacity-80 transition-opacity duration-400">
+        <svg width="12" height="7" viewBox="0 0 12 7" fill="none" className="text-slate-500 group-hover:text-brand-violet/60 transition-colors duration-400">
+          <path d="M1 1l5 5 5-5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+        <svg width="12" height="7" viewBox="0 0 12 7" fill="none" className="text-slate-600/60 group-hover:text-brand-violet/40 transition-colors duration-400">
+          <path d="M1 1l5 5 5-5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      </div>
+    </motion.button>
   );
 }

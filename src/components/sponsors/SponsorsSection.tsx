@@ -154,9 +154,55 @@ export default function SponsorsSection() {
   return (
     <section
       id="sponsors-section"
-      className="relative w-full min-h-screen bg-obsidian-950 overflow-visible py-28 z-30 -mt-[50vh]"
+      className="relative w-full min-h-screen bg-obsidian-950 overflow-visible py-28 z-30"
       aria-label="Synapse Ecosystem Partners"
     >
+      {/* Volumetric portal exit light-bleed dividing bar */}
+      <div className="absolute top-0 inset-x-0 h-40 bg-gradient-to-b from-brand-violet/[0.08] via-brand-amber/[0.03] to-transparent pointer-events-none z-10" />
+
+      {/* Blueprint background dot-coordinate grid map */}
+      <div 
+        className="absolute inset-0 opacity-[0.06] pointer-events-none select-none"
+        style={{
+          backgroundImage: "radial-gradient(circle at center, rgba(139,92,246,0.15) 1px, transparent 1px)",
+          backgroundSize: "24px 24px"
+        }}
+      />
+
+      {/* Dynamic volumetric ambient orbs breathing slowly inside the newly traversed dimension */}
+      <motion.div
+        className="absolute top-[15%] left-[5%] w-[600px] h-[600px] rounded-full pointer-events-none mix-blend-screen opacity-[0.05]"
+        style={{
+          background: "radial-gradient(circle, rgba(139,92,246,0.3) 0%, rgba(249,115,22,0.05) 50%, transparent 100%)",
+        }}
+        animate={{
+          x: [-30, 30, -30],
+          y: [-25, 25, -25],
+          scale: [0.95, 1.05, 0.95]
+        }}
+        transition={{
+          duration: 12,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+      />
+      <motion.div
+        className="absolute bottom-[15%] right-[5%] w-[600px] h-[600px] rounded-full pointer-events-none mix-blend-screen opacity-[0.04]"
+        style={{
+          background: "radial-gradient(circle, rgba(249,115,22,0.25) 0%, rgba(139,92,246,0.05) 50%, transparent 100%)",
+        }}
+        animate={{
+          x: [30, -30, 30],
+          y: [25, -25, 25],
+          scale: [1.05, 0.95, 1.05]
+        }}
+        transition={{
+          duration: 15,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+      />
+
       {/* Blueprint background coordinate grid & Dynamic atmospheric backdrops */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom,rgba(124,58,237,0.03)_0%,transparent_60%)] pointer-events-none" />
       <div className="absolute top-1/4 left-[10%] w-[500px] h-[350px] rounded-full bg-brand-violet/[0.025] blur-[120px] pointer-events-none" />

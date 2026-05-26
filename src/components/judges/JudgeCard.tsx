@@ -28,21 +28,21 @@ export default function JudgeCard({ judge }: JudgeCardProps) {
   // Config mapping based on tier/theme colors
   const theme = {
     gold: {
-      border: "border-brand-amber/12 hover:border-brand-amber/35",
+      border: "border-brand-amber/30 hover:border-brand-amber/70",
       glow: "rgba(249, 115, 22, 0.08)",
       textAccent: "text-brand-amber",
       badge: "border-brand-amber/20 text-brand-amber bg-brand-amber/5",
       accentCard: "shadow-[0_0_20px_rgba(249,115,22,0.03)]"
     },
     violet: {
-      border: "border-brand-violet/12 hover:border-brand-violet/35",
+      border: "border-brand-violet/30 hover:border-brand-violet/70",
       glow: "rgba(139, 92, 246, 0.07)",
       textAccent: "text-brand-violet",
       badge: "border-brand-violet/20 text-brand-violet bg-brand-violet/5",
       accentCard: ""
     },
     teal: {
-      border: "border-teal-500/12 hover:border-teal-500/35",
+      border: "border-teal-500/30 hover:border-teal-500/70",
       glow: "rgba(20, 184, 166, 0.06)",
       textAccent: "text-teal-400",
       badge: "border-teal-500/20 text-teal-400 bg-teal-500/5",

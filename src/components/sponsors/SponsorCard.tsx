@@ -71,11 +71,13 @@ export default function SponsorCard({ sponsor, index }: SponsorCardProps) {
       {/* Layer 30: Vector-grid gridline accents inside card edges */}
       <div className="absolute inset-0 pointer-events-none border border-transparent group-hover:border-brand-violet/5 duration-300" />
 
-      {/* Layer 40: Mini technical blueprint indicators */}
-      <span className="absolute top-2.5 left-3 font-mono text-[8px] tracking-wider text-obsidian-500 select-none group-hover:text-obsidian-300 duration-300">
+      {/* Layer 40: Mini technical blueprint indicators with active node indicator dots */}
+      <span className="absolute top-2.5 left-3 font-mono text-[8px] tracking-wider text-obsidian-500 select-none group-hover:text-obsidian-300 duration-300 flex items-center gap-1.5">
+        <span className="w-1 h-1 rounded-full bg-[#10B981] animate-pulse" style={{ boxShadow: "0 0 5px #10B981" }} />
         [ {sponsor.nodeId} ]
       </span>
-      <span className={`absolute bottom-2.5 right-3 font-mono text-[8px] tracking-wider uppercase select-none ${theme.tag} opacity-80 group-hover:opacity-100 duration-300`}>
+      <span className={`absolute bottom-2.5 right-3 font-mono text-[8px] tracking-wider uppercase select-none ${theme.tag} opacity-80 group-hover:opacity-100 duration-300 flex items-center gap-1.5`}>
+        <span className="w-1 h-1 rounded-full bg-current opacity-60 group-hover:opacity-100" />
         {sponsor.tier === "alpha" ? "ALPHA.CORE" : sponsor.tier === "consensus" ? "CON.NODE" : "NET.PEER"}
       </span>
 

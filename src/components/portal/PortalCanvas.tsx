@@ -241,9 +241,9 @@ const DecagonTunnel = ({
 }) => {
   const tunnelRef = useRef<THREE.Group>(null);
   
-  // Responsive ring density configuration - 6 rings on desktop for spacious depth
-  const ringCount = isMobile ? 3 : 6;
-  const spacing = 4.0;
+  // 4 rings on desktop, 2 on mobile — tighter, faster, more cinematic
+  const ringCount = isMobile ? 2 : 4;
+  const spacing = 3.5;
   
   // Custom shader uniforms for dual-layer meshes
   const filamentUniforms = useMemo(() => ({
@@ -525,10 +525,10 @@ export default function PortalCanvas({
         gl={{
           antialias: true,
           powerPreference: "high-performance",
-          alpha: true
+          alpha: false
         }}
       >
-        <color attach="background" args={["#05050C"]} />
+        <color attach="background" args={["#040409"]} />
         
         {/* Core Lighting System: Symmetrical Ambient + Spotlights */}
         <ambientLight intensity={0.15} />

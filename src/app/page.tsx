@@ -13,17 +13,17 @@ import Footer from "@/components/footer/Footer";
 
 export default function Home() {
   return (
-    <main className="relative w-full min-h-screen bg-obsidian-950 overflow-hidden">
+    <main className="relative w-full min-h-screen bg-obsidian-950 overflow-x-clip overflow-y-visible">
       {/* Cinematic grid boundary lines mapping global canvas framing */}
       <div className="absolute inset-0 bg-obsidian-950 z-0 pointer-events-none" />
       
       {/* Polished Master Hero Area */}
       <BaseHero />
 
-      {/* Cinematic Portal Transition Corridor */}
+      {/* Cinematic Portal Transition */}
       <BasePortal />
 
-      {/* Cinematic Sponsor Ecosystem Section */}
+      {/* Standalone Sponsors Section */}
       <SponsorsSection />
 
       {/* Cinematic Tracks and Challenges Section */}
@@ -52,4 +52,3 @@ export default function Home() {
     </main>
   );
 }
-
