@@ -8,108 +8,90 @@ export default function JudgesSection() {
   const juryBoard: Judge[] = [
     {
       id: "jury-1",
-      name: "Dr. Aarav Mehta",
-      role: "Director of Neural Architectures",
-      company: "OranetAI Research Labs",
-      specialties: ["LLM_Ops", "RAG_Agents", "Deep_Learning"],
+      name: "To Be Announced",
+      role: "Hackathon Judge",
+      company: "Ecosystem Partner",
+      specialties: ["AI Research", "LLM Systems", "Computer Vision"],
       tier: "jury",
       themeColor: "gold",
-      nodeId: "VALIDATOR.0x01_AI",
-      isSponsorAligned: true,
-      socials: {
-        linkedin: "https://linkedin.com",
-        github: "https://github.com",
-        twitter: "https://twitter.com"
-      }
+      nodeId: "JUDGE_01",
+      isComingSoon: true,
+      socials: {}
     },
     {
       id: "jury-2",
-      name: "Kunal Sen",
-      role: "Chief Web3 Protocol Architect",
-      company: "EtherSync Foundation",
-      specialties: ["Solidity", "EVM_Scaling", "Crypto_Protocols"],
+      name: "To Be Announced",
+      role: "Hackathon Judge",
+      company: "Ecosystem Partner",
+      specialties: ["Protocol Design", "Smart Contracts", "Cryptography"],
       tier: "jury",
       themeColor: "gold",
-      nodeId: "VALIDATOR.0x02_WEB3",
-      socials: {
-        linkedin: "https://linkedin.com",
-        github: "https://github.com",
-        twitter: "https://twitter.com"
-      }
+      nodeId: "JUDGE_02",
+      isComingSoon: true,
+      socials: {}
     },
     {
       id: "jury-3",
-      name: "Priya Sharma",
-      role: "Principal Venture Partner",
-      company: "Synapse Capital Syndicate",
-      specialties: ["Protocol_Valuation", "Growth", "Venture_Runway"],
+      name: "To Be Announced",
+      role: "Hackathon Judge",
+      company: "Ecosystem Partner",
+      specialties: ["Product Strategy", "Venture Scale", "Developer Platforms"],
       tier: "jury",
       themeColor: "gold",
-      nodeId: "VALIDATOR.0x03_VC",
-      socials: {
-        linkedin: "https://linkedin.com",
-        twitter: "https://twitter.com"
-      }
+      nodeId: "JUDGE_03",
+      isComingSoon: true,
+      socials: {}
     }
   ];
 
   const mentors: Judge[] = [
     {
       id: "mentor-1",
-      name: "Rohan Joshi",
-      role: "Senior Machine Learning Engineer",
-      company: "OranetAI Systems",
-      specialties: ["PyTorch", "Cloud_Infra", "Model_Distill"],
+      name: "To Be Announced",
+      role: "Technical Mentor",
+      company: "Ecosystem Partner",
+      specialties: ["Machine Learning", "Model Ops", "PyTorch"],
       tier: "mentor",
       themeColor: "violet",
-      nodeId: "GUIDE.0x01_ML",
-      isSponsorAligned: true,
-      socials: {
-        linkedin: "https://linkedin.com",
-        github: "https://github.com"
-      }
+      nodeId: "MENTOR_01",
+      isComingSoon: true,
+      socials: {}
     },
     {
       id: "mentor-2",
-      name: "Vikram Malhotra",
-      role: "Lead Smart Contract Auditor",
-      company: "SecureNodes",
-      specialties: ["Hardhat", "Compiler_Logic", "Audit_Security"],
+      name: "To Be Announced",
+      role: "Technical Mentor",
+      company: "Ecosystem Partner",
+      specialties: ["Smart Contracts", "EVM Scaling", "Security Audits"],
       tier: "mentor",
       themeColor: "teal",
-      nodeId: "GUIDE.0x02_AUDIT",
-      socials: {
-        linkedin: "https://linkedin.com",
-        github: "https://github.com"
-      }
+      nodeId: "MENTOR_02",
+      isComingSoon: true,
+      socials: {}
     },
     {
       id: "mentor-3",
-      name: "Anjali Nair",
-      role: "Full-Stack Interface Architect",
-      company: "Decentralized UX Guild",
-      specialties: ["NextJS", "React", "GraphQL"],
+      name: "To Be Announced",
+      role: "Technical Mentor",
+      company: "Ecosystem Partner",
+      specialties: ["Frontend Arch", "React / Next.js", "User Experience"],
       tier: "mentor",
       themeColor: "violet",
-      nodeId: "GUIDE.0x03_UI",
-      socials: {
-        linkedin: "https://linkedin.com",
-        github: "https://github.com"
-      }
+      nodeId: "MENTOR_03",
+      isComingSoon: true,
+      socials: {}
     },
     {
       id: "mentor-4",
-      name: "Devendra Singh",
-      role: "Cloud DevOps & AWS Orchestrator",
-      company: "Acropolis Tech Lab",
-      specialties: ["AWS_Runway", "Docker", "CI_CD_Pipeline"],
+      name: "To Be Announced",
+      role: "Technical Mentor",
+      company: "Ecosystem Partner",
+      specialties: ["Cloud Infra", "DevOps", "CI/CD Pipelines"],
       tier: "mentor",
       themeColor: "teal",
-      nodeId: "GUIDE.0x04_DEVOPS",
-      socials: {
-        linkedin: "https://linkedin.com",
-        github: "https://github.com"
-      }
+      nodeId: "MENTOR_04",
+      isComingSoon: true,
+      socials: {}
     }
   ];
 
@@ -147,7 +129,7 @@ export default function JudgesSection() {
           >
             <span className="w-1.5 h-1.5 bg-brand-amber rounded-full animate-pulse" />
             <span className="font-mono text-[10px] uppercase tracking-[0.25em] text-brand-amber font-semibold">
-              [ ECOSYSTEM_VALIDATORS ]
+              OUR EXPERT NETWORK
             </span>
             <span className="w-1.5 h-1.5 bg-brand-amber rounded-full animate-pulse" />
           </motion.div>
@@ -177,7 +159,7 @@ export default function JudgesSection() {
             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
             className="max-w-2xl text-xs md:text-sm font-mono text-obsidian-400 tracking-wide leading-relaxed"
           >
-            MEET THE SYSTEM ARCHITECTS AND GUILD GUIDES STABILIZING THE SYNAPSE ECOSYSTEM. RECEIVE ACTIVE RUN-TIME FEEDBACK AND ACCELERATE YOUR PROTOTYPE INTO VIABLE PROTOCOLS.
+            LEARN FROM INDUSTRY EXPERTS, SERIAL ENTREPRENEURS, AND LEADING ENGINEERS. GET REAL-WORLD GUIDANCE, TECHNICAL VALIDATION, AND ACCELERATE YOUR PROJECT.
           </motion.p>
         </div>
 
@@ -186,7 +168,7 @@ export default function JudgesSection() {
         */}
         <div className="mb-20 md:mb-28">
           <div className="flex items-center gap-4 mb-10 select-none">
-            <span className="font-mono text-xs text-brand-amber font-extrabold tracking-widest uppercase">[ COHORT_01 // CORE_JURY ]</span>
+            <span className="font-mono text-xs text-brand-amber font-extrabold tracking-widest uppercase">[ CORE JUDGES ]</span>
             <div className="flex-1 h-[1px] bg-brand-amber/15" />
           </div>
           
@@ -211,7 +193,7 @@ export default function JudgesSection() {
         */}
         <div className="mb-20 md:mb-28">
           <div className="flex items-center gap-4 mb-10 select-none">
-            <span className="font-mono text-xs text-brand-violet font-extrabold tracking-widest uppercase">[ COHORT_02 // ACCELERATION_MENTORS ]</span>
+            <span className="font-mono text-xs text-brand-violet font-extrabold tracking-widest uppercase">[ TECHNICAL MENTORS ]</span>
             <div className="flex-1 h-[1px] bg-brand-violet/15" />
           </div>
 
@@ -252,13 +234,13 @@ export default function JudgesSection() {
           <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8 md:gap-12 text-center md:text-left">
             <div className="flex-1">
               <span className="font-mono text-[9px] text-brand-amber font-bold tracking-widest uppercase block mb-3">
-                [ RUN-TIME_COLLABORATION ]
+                [ COLLABORATION ]
               </span>
               <h3 className="text-2xl md:text-3xl font-black font-display text-white tracking-tight mb-3 uppercase">
-                COLLABORATE WITH ECOSYSTEM LEADERS
+                COLLABORATE WITH INDUSTRY LEADERS
               </h3>
               <p className="text-xs md:text-sm font-mono text-obsidian-400 max-w-lg leading-relaxed">
-                Want to accelerate developer teams or validate emerging crypto-networks and AI models? Join our mentor network or secure your team credentials to build under their oversight.
+                Interested in mentoring builders or supporting the next wave of open-source innovation? Partner with us or apply to join our expert network.
               </p>
             </div>
 
@@ -269,7 +251,7 @@ export default function JudgesSection() {
                 whileTap={{ scale: 0.98 }}
                 className="flex-1 sm:flex-none text-center px-8 py-3.5 rounded font-mono text-xs font-black tracking-widest text-black bg-brand-amber hover:bg-brand-amber-light transition-colors shadow-[0_0_25px_rgba(249,115,22,0.15)] uppercase select-none"
               >
-                SECURE_SYNDICATE_SLOT
+                REGISTER NOW
               </motion.a>
               <motion.a
                 href="mailto:partners@synapse.io?subject=Mentor%20Application%20-%20Synapse%201.0"
@@ -277,7 +259,7 @@ export default function JudgesSection() {
                 whileTap={{ scale: 0.98 }}
                 className="flex-1 sm:flex-none text-center px-8 py-3.5 rounded font-mono text-xs font-bold tracking-widest text-white border border-white/10 hover:border-white/20 transition-all uppercase select-none"
               >
-                APPLY_AS_MENTOR
+                APPLY AS MENTOR
               </motion.a>
             </div>
           </div>

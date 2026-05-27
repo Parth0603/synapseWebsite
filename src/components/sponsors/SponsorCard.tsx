@@ -38,13 +38,13 @@ export default function SponsorCard({ sponsor, index }: SponsorCardProps) {
   }[sponsor.tier];
 
   // Map tier aspects and optimized padding
-  const aspectClass = sponsor.tier === "peer" ? "aspect-[2.2/1] p-4" : "aspect-[16/10] p-6";
+  const aspectClass = sponsor.tier === "peer" ? "aspect-[2.2/1] p-6 md:p-8" : "aspect-[16/10] p-8 md:p-10";
 
   // Map tier-specific expanded logo sizing limits
   const logoSize = {
-    alpha: "max-h-[64px] max-w-[190px]",
-    consensus: "max-h-[54px] max-w-[160px]",
-    peer: "max-h-[40px] max-w-[125px]"
+    alpha: "max-h-[120px] max-w-[350px]",
+    consensus: "max-h-[100px] max-w-[300px]",
+    peer: "max-h-[80px] max-w-[250px]"
   }[sponsor.tier];
 
   return (
@@ -52,7 +52,7 @@ export default function SponsorCard({ sponsor, index }: SponsorCardProps) {
       href={sponsor.url}
       target="_blank"
       rel="noopener noreferrer"
-      className={`group relative overflow-hidden rounded border border-white/5 bg-obsidian-900/60 backdrop-blur-md flex flex-col items-center justify-center transition-all duration-300 ${theme.border} ${aspectClass} will-change-transform`}
+      className={`group relative overflow-hidden rounded border border-white/10 bg-obsidian-900/80 backdrop-blur-md flex flex-col items-center justify-center transition-all duration-300 ${theme.border} ${aspectClass} will-change-transform`}
       aria-label={`${sponsor.name} Sponsorship Node`}
       whileHover={{ y: -2, scale: 1.01 }} // Slightly more restrained motion
       transition={{ type: "spring", stiffness: 350, damping: 28 }} // Slightly more damped motion
@@ -69,24 +69,16 @@ export default function SponsorCard({ sponsor, index }: SponsorCardProps) {
       />
 
       {/* Layer 30: Vector-grid gridline accents inside card edges */}
-      <div className="absolute inset-0 pointer-events-none border border-transparent group-hover:border-brand-violet/5 duration-300" />
+      <div className="absolute inset-0 pointer-events-none border border-transparent group-hover:border-brand-violet/10 duration-300" />
 
-      {/* Layer 40: Mini technical blueprint indicators with active node indicator dots */}
-      <span className="absolute top-2.5 left-3 font-mono text-[8px] tracking-wider text-obsidian-500 select-none group-hover:text-obsidian-300 duration-300 flex items-center gap-1.5">
-        <span className="w-1 h-1 rounded-full bg-[#10B981] animate-pulse" style={{ boxShadow: "0 0 5px #10B981" }} />
-        [ {sponsor.nodeId} ]
-      </span>
-      <span className={`absolute bottom-2.5 right-3 font-mono text-[8px] tracking-wider uppercase select-none ${theme.tag} opacity-80 group-hover:opacity-100 duration-300 flex items-center gap-1.5`}>
-        <span className="w-1 h-1 rounded-full bg-current opacity-60 group-hover:opacity-100" />
-        {sponsor.tier === "alpha" ? "ALPHA.CORE" : sponsor.tier === "consensus" ? "CON.NODE" : "NET.PEER"}
-      </span>
+
 
       {/* 
         Layer 50: Interactive Logo Container. Maps a high-performance grayscale filter by default,
         restoring full colored brand identities only on hover.
       */}
       <div 
-        className={`relative w-full h-full ${logoSize} flex items-center justify-center filter grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300`}
+        className={`relative w-full h-full ${logoSize} flex items-center justify-center filter grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300`}
       >
         {sponsor.logo}
       </div>

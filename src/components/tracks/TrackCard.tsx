@@ -6,12 +6,13 @@ import { motion } from "framer-motion";
 export interface Track {
   id: string;
   name: string;
-  prizePool: string;
-  nodeId: string;
+  prizePool?: string;
+  nodeId?: string;
   description: string;
-  technologies: string[];
+  technologies?: string[];
   themeColor: "violet" | "amber" | "cyan" | "rose";
   icon: React.ReactNode;
+  isComingSoon?: boolean;
 }
 
 interface TrackCardProps {
@@ -48,16 +49,60 @@ export default function TrackCard({ track, index }: TrackCardProps) {
     }
   }[track.themeColor];
 
+  if (track.isComingSoon) {
+    return (
+      <motion.div
+        className={`group relative overflow-hidden rounded-lg border border-white/5 bg-obsidian-900/40 backdrop-blur-md p-6 md:p-8 flex flex-col justify-between transition-all duration-300 ${theme.border} h-full min-h-[380px] will-change-transform`}
+        whileHover={{ y: -2.5, scale: 1.008 }}
+        transition={{ type: "spring", stiffness: 300, damping: 26 }}
+      >
+        <div
+          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+          style={{
+            background: `radial-gradient(circle at 10% 10%, ${theme.glow} 0%, transparent 60%)`
+          }}
+        />
+
+        <div className="absolute inset-0 pointer-events-none border border-transparent group-hover:border-white/[0.02] duration-300" />
+
+        {/* Card Header Info */}
+        <div>
+          <div className="flex items-center justify-between mb-6">
+            <span className="font-mono text-[9px] tracking-widest text-obsidian-500 group-hover:text-obsidian-300 duration-300 select-none">
+              Track Reveal Pending
+            </span>
+          </div>
+
+          {/* Vector SVG Icon */}
+          <div className={`w-12 h-12 rounded border flex items-center justify-center mb-6 transition-all duration-300 ${theme.iconBg}`}>
+            {track.icon}
+          </div>
+
+          {/* Challenge Title */}
+          <h3 className="text-xl md:text-2xl font-bold tracking-tight text-white mb-3 font-display">
+            Coming Soon
+          </h3>
+
+          {/* Challenge Description */}
+          <p className="text-xs md:text-sm text-obsidian-400 font-mono tracking-wide leading-relaxed mb-6 group-hover:text-obsidian-300 duration-300">
+            Official sponsor-backed hackathon tracks and challenge statements will be announced shortly.
+          </p>
+        </div>
+
+        {/* Spacer to preserve layout structure */}
+        <div>
+          <div className="w-full h-[1px] bg-white/5 opacity-0 mb-5 pointer-events-none" />
+        </div>
+      </motion.div>
+    );
+  }
+
   return (
     <motion.div
       className={`group relative overflow-hidden rounded-lg border border-white/5 bg-obsidian-900/40 backdrop-blur-md p-6 md:p-8 flex flex-col justify-between transition-all duration-300 ${theme.border} h-full min-h-[380px] will-change-transform`}
-      whileHover={{ y: -2.5, scale: 1.008 }} // Slightly more restrained motion
+      whileHover={{ y: -2.5, scale: 1.008 }}
       transition={{ type: "spring", stiffness: 300, damping: 26 }}
     >
-      {/* 
-        Layer 10: absolute underglow mesh gradient. Animating only opacity on the compositor thread 
-        to ensure high GPU performance during heavy scrolling.
-      */}
       <div
         className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
         style={{
@@ -65,7 +110,6 @@ export default function TrackCard({ track, index }: TrackCardProps) {
         }}
       />
 
-      {/* Layer 20: Subtle grid scanline details */}
       <div className="absolute inset-0 pointer-events-none border border-transparent group-hover:border-white/[0.02] duration-300" />
 
       {/* Card Header Info */}
@@ -100,7 +144,7 @@ export default function TrackCard({ track, index }: TrackCardProps) {
       <div>
         <div className="w-full h-[1px] bg-white/5 mb-5 pointer-events-none" />
         <div className="flex flex-wrap gap-2 select-none">
-          {track.technologies.map((tech) => (
+          {track.technologies?.map((tech) => (
             <span
               key={tech}
               className={`font-mono text-[8px] font-bold tracking-widest uppercase px-2.5 py-1 rounded border transition-all duration-300 ${theme.pill}`}
