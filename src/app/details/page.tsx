@@ -129,41 +129,104 @@ export default function DetailsPage() {
 
         .sponsor-btn:hover { box-shadow: 0 0 60px hsla(271,91%,65%,.55) !important; transform: translateY(-2px); transition: all .2s ease; }
         .card-hover:hover { border-color: hsla(271,91%,65%,.35) !important; background: rgba(255,255,255,.04) !important; transform: translateY(-3px); transition: all .25s ease; }
+
+        .details-nav {
+          position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+          display: flex; align-items: center; justify-content: space-between;
+          padding: 14px 40px;
+          background: rgba(5,5,12,0.85);
+          backdrop-filter: blur(20px) saturate(180%);
+          border-bottom: 1px solid rgba(255,255,255,0.05);
+          transition: all 0.25s ease;
+        }
+
+        .details-nav-logo-text {
+          font-family: var(--font-heading, Outfit, sans-serif);
+          font-size: 16px;
+          font-weight: 700;
+          letter-spacing: 0.14em;
+          color: #fff;
+          white-space: nowrap;
+          transition: all 0.25s ease;
+        }
+
+        .details-nav-btn {
+          padding: 9px 22px;
+          background: linear-gradient(135deg, hsl(271,91%,55%), hsl(271,91%,40%));
+          color: #fff;
+          font-size: 12px;
+          font-weight: 700;
+          letter-spacing: 0.10em;
+          border-radius: 4px;
+          text-decoration: none;
+          box-shadow: 0 0 24px hsla(271,91%,65%,.30);
+          border: 1px solid hsla(271,91%,65%,.30);
+          white-space: nowrap;
+          transition: all 0.25s ease;
+        }
+
+        .details-nav-dot {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background: hsl(271,91%,65%);
+          box-shadow: 0 0 8px hsla(271,91%,65%,.6);
+          animation: glow-pulse 2s ease-in-out infinite;
+          flex-shrink: 0;
+          transition: all 0.25s ease;
+        }
+
+        @media (max-width: 640px) {
+          .details-nav {
+            padding: 12px 20px;
+          }
+          .details-nav-logo-text {
+            font-size: 13px !important;
+            letter-spacing: 0.08em !important;
+          }
+          .details-nav-btn {
+            padding: 7px 14px !important;
+            font-size: 10px !important;
+            letter-spacing: 0.06em !important;
+          }
+          .details-nav-dot {
+            width: 6px !important;
+            height: 6px !important;
+          }
+        }
+
+        @media (max-width: 375px) {
+          .details-nav {
+            padding: 10px 14px;
+          }
+          .details-nav-logo-text {
+            font-size: 12px !important;
+            letter-spacing: 0.05em !important;
+          }
+          .details-nav-btn {
+            padding: 6px 10px !important;
+            font-size: 9px !important;
+            letter-spacing: 0.04em !important;
+          }
+        }
       `}</style>
 
       {/* ─── Fixed Nav ──────────────────────────────────────────────────── */}
-      <nav
-        style={{
-          position: "fixed", top: 0, left: 0, right: 0, zIndex: 50,
-          display: "flex", alignItems: "center", justifyContent: "space-between",
-          padding: "14px 40px",
-          background: "rgba(5,5,12,0.85)",
-          backdropFilter: "blur(20px) saturate(180%)",
-          borderBottom: "1px solid rgba(255,255,255,0.05)",
-        }}
-      >
+      <nav className="details-nav">
         {/* Corner accents */}
         <div style={{ position: "absolute", top: 0, left: 0, width: 20, height: 20, borderTop: "1px solid rgba(139,92,246,.25)", borderLeft: "1px solid rgba(139,92,246,.25)" }} />
         <div style={{ position: "absolute", top: 0, right: 0, width: 20, height: 20, borderTop: "1px solid rgba(139,92,246,.25)", borderRight: "1px solid rgba(139,92,246,.25)" }} />
 
-        <Link href="/" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "10px" }}>
-          <div style={{ width: 8, height: 8, borderRadius: "50%", background: "hsl(271,91%,65%)", boxShadow: "0 0 8px hsla(271,91%,65%,.6)", animation: "glow-pulse 2s ease-in-out infinite" }} />
-          <span style={{ fontFamily: "var(--font-heading, Outfit, sans-serif)", fontSize: "16px", fontWeight: 700, letterSpacing: "0.14em", color: "#fff" }}>
+        <Link href="/" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "8px" }}>
+          <div className="details-nav-dot" />
+          <span className="details-nav-logo-text">
             SYNAPSE 1.0
           </span>
         </Link>
 
         <a
-          href="mailto:partners@synapse.acropolisblockchain.club?subject=Sponsorship%20Inquiry%20%E2%80%94%20SYNAPSE%201.0"
-          className="sponsor-btn"
-          style={{
-            padding: "9px 22px",
-            background: "linear-gradient(135deg, hsl(271,91%,55%), hsl(271,91%,40%))",
-            color: "#fff", fontSize: "12px", fontWeight: 700, letterSpacing: "0.10em",
-            borderRadius: "4px", textDecoration: "none",
-            boxShadow: "0 0 24px hsla(271,91%,65%,.30)",
-            border: "1px solid hsla(271,91%,65%,.30)",
-          }}
+          href="mailto:blockchainclub@acropolis.in?subject=Sponsorship%20Inquiry%20%E2%80%94%20SYNAPSE%201.0"
+          className="details-nav-btn sponsor-btn"
         >
           BECOME A SPONSOR →
         </a>
@@ -361,21 +424,24 @@ export default function DetailsPage() {
       <section style={{ padding: "100px 24px", maxWidth: "800px", margin: "0 auto" }}>
         <SectionLabel>ABOUT THE EVENT</SectionLabel>
         <h2 style={sH}>Built for builders who think in systems.</h2>
-        <p style={bT}>
-          SYNAPSE 1.0 is organised by the{" "}
-          <span style={{ color: "hsl(271,91%,72%)", fontWeight: 600 }}>Acropolis Blockchain Club</span> — a
-          student-led technical community at AITR Indore driving India's next wave of AI and
-          decentralised innovation.
-        </p>
-        <p style={{ ...bT, marginTop: "16px" }}>
-          Over <strong style={{ color: "#F8FAFC" }}>24 hours</strong> on{" "}
-          <strong style={{ color: "#F8FAFC" }}>June 26–27, 2026</strong>, teams of 1–4 compete
-          across two structured rounds: an <strong style={{ color: "#F8FAFC" }}>online qualifier</strong> followed
-          by an <strong style={{ color: "#F8FAFC" }}>offline grand finale</strong> at the AITR campus in Indore.
-          Mentorship, workshops, and sponsor-led challenge tracks are woven throughout.
-        </p>
+        <div style={{ maxWidth: "680px", margin: "0 auto" }}>
+          <p style={bT}>
+            SYNAPSE 1.0 is organised by the{" "}
+            <span style={{ color: "hsl(271,91%,72%)", fontWeight: 600 }}>Acropolis Blockchain Club</span> — a
+            student-led technical community at AITR Indore driving India's next wave of AI and
+            decentralised innovation.
+          </p>
+          <p style={{ ...bT, marginTop: "16px" }}>
+            Over <strong style={{ color: "#F8FAFC" }}>24 hours</strong> on{" "}
+            <strong style={{ color: "#F8FAFC" }}>June 26–27, 2026</strong>, teams of 1–4 compete
+            across two structured rounds: an <strong style={{ color: "#F8FAFC" }}>online qualifier</strong> followed
+            by an <strong style={{ color: "#F8FAFC" }}>offline grand finale</strong> at the AITR campus in Indore.
+            Mentorship, workshops, and sponsor-led challenge tracks are woven throughout.
+          </p>
+        </div>
 
         <div style={{
+
           marginTop: "40px",
           display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(195px,1fr))",
           gap: "14px",
@@ -604,7 +670,7 @@ export default function DetailsPage() {
         <div style={{ maxWidth: "900px", margin: "0 auto", position: "relative" }}>
           <SectionLabel>WHY SPONSOR</SectionLabel>
           <h2 style={sH}>Your brand. Their breakthrough moment.</h2>
-          <p style={{ ...bT, marginBottom: "48px", maxWidth: "600px" }}>
+          <p style={{ ...bT, maxWidth: "600px", margin: "0 auto 48px" }}>
             SYNAPSE isn't just a hackathon — it's where India's next AI and blockchain founders
             take their first real steps. Be the company that was there when it started.
           </p>
@@ -791,7 +857,7 @@ export default function DetailsPage() {
             backing India's next generation of builders.
           </p>
           <a
-            href="mailto:partners@synapse.acropolisblockchain.club?subject=Sponsorship%20Inquiry%20%E2%80%94%20SYNAPSE%201.0"
+            href="mailto:blockchainclub@acropolis.in?subject=Sponsorship%20Inquiry%20%E2%80%94%20SYNAPSE%201.0"
             className="sponsor-btn"
             style={{
               display: "inline-block", padding: "16px 44px",
@@ -854,10 +920,11 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
     <div style={{
       fontSize: "11px", fontWeight: 700, letterSpacing: "0.20em",
       color: "hsl(271,91%,65%)", textTransform: "uppercase", marginBottom: "16px",
-      display: "flex", alignItems: "center", gap: "10px",
+      display: "flex", alignItems: "center", justifyContent: "center", gap: "10px",
     }}>
       <div style={{ width: 20, height: "1px", background: "hsl(271,91%,65%)", opacity: 0.5 }} />
       {children}
+      <div style={{ width: 20, height: "1px", background: "hsl(271,91%,65%)", opacity: 0.5 }} />
     </div>
   );
 }
@@ -867,10 +934,13 @@ const sH: React.CSSProperties = {
   fontSize: "clamp(26px, 4vw, 44px)",
   fontWeight: 800, lineHeight: 1.1, letterSpacing: "-0.02em",
   color: "#F8FAFC", marginBottom: "20px",
+  textAlign: "center",
 };
 
 const bT: React.CSSProperties = {
   fontSize: "16px",
   color: "rgba(248,250,252,.45)",
   lineHeight: 1.8,
+  textAlign: "center",
 };
+

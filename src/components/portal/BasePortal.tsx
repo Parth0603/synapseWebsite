@@ -7,6 +7,7 @@ import {
   useSpring,
   useMotionValue,
   useTransform,
+  animate,
 } from "framer-motion";
 import { useLenis } from "lenis/react";
 import dynamic from "next/dynamic";
@@ -64,6 +65,7 @@ export default function BasePortal() {
     let lastProg = 0;
     let rafId: number | null = null;
     let isSnapping = false;
+    let touchStartY = 0;
 
     // ─── Auto-detect completion on mount ─────────────────────────────────────
     // If the page loads (or hydrates) with scroll already past the portal section,
@@ -218,8 +220,36 @@ export default function BasePortal() {
       }
     };
 
+    const handleTouchStart = (e: TouchEvent) => {
+      if (e.touches.length > 0) {
+        touchStartY = e.touches[0].clientY;
+      }
+    };
+
     const handleTouchMove = (e: TouchEvent) => {
-      if (isLocked) { e.stopImmediatePropagation(); e.preventDefault(); }
+      if (!isLocked) return;
+
+      e.stopImmediatePropagation();
+      e.preventDefault();
+
+      if (e.touches.length > 0) {
+        const currentY = e.touches[0].clientY;
+        const deltaY = touchStartY - currentY;
+        touchStartY = currentY;
+
+        // Optimized touch sensitivity for smooth mobile interaction
+        const sensitivity = 0.0028;
+        targetProg = Math.max(0, Math.min(1, targetProg + deltaY * sensitivity));
+        const cur = progressValue.get();
+
+        if (lockDir === "forward") {
+          if (deltaY > 0 && targetProg >= 0.98 && cur > 0.95) exitForward();
+          if (deltaY < 0 && targetProg <= 0 && cur < 0.01) exitBackward();
+        } else {
+          if (deltaY < 0 && targetProg <= 0 && cur < 0.01) exitBackward();
+          if (deltaY > 0 && targetProg >= 0.98 && cur > 0.95) exitForward();
+        }
+      }
     };
 
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -252,6 +282,7 @@ export default function BasePortal() {
     };
 
     window.addEventListener("wheel", handleWheel, { passive: false, capture: true });
+    window.addEventListener("touchstart", handleTouchStart, { passive: true });
     window.addEventListener("touchmove", handleTouchMove, { passive: false, capture: true });
     window.addEventListener("keydown", handleKeyDown);
     window.addEventListener("scroll", handleNativeScroll, { passive: false });
@@ -305,6 +336,7 @@ export default function BasePortal() {
       unsubscribe();
       stopRaf();
       window.removeEventListener("wheel", handleWheel, { capture: true });
+      window.removeEventListener("touchstart", handleTouchStart);
       window.removeEventListener("touchmove", handleTouchMove, { capture: true });
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("scroll", handleNativeScroll);
@@ -312,12 +344,20 @@ export default function BasePortal() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mounted, isMobile, isReducedMotion]);
 
-  // Mobile / reduced-motion: direct sync, no lock
+  // Reduced-motion: beautiful auto-playing warp loop!
   useEffect(() => {
-    if (!mounted || !(isMobile || isReducedMotion)) return;
-    const unsub = scrollYProgress.on("change", (v: number) => progressValue.set(v));
-    return () => unsub();
-  }, [mounted, isMobile, isReducedMotion, scrollYProgress, progressValue]);
+    if (!mounted) return;
+    if (!isReducedMotion) return;
+
+    // Linear progress animation that repeats infinitely
+    const controls = animate(progressValue, [0, 1], {
+      duration: 5.5,
+      repeat: Infinity,
+      ease: "linear",
+    });
+
+    return () => controls.stop();
+  }, [mounted, isReducedMotion, progressValue]);
 
   useEffect(() => {
     setMounted(true);
@@ -368,12 +408,12 @@ export default function BasePortal() {
       </a>
 
       <div className="sticky top-0 h-screen w-full overflow-hidden bg-obsidian-950">
-        {mounted && !isMobile && !isReducedMotion ? (
+        {mounted && !isReducedMotion ? (
           <ErrorBoundary fallback={<PortalRingsFallback progress={smoothProgress} isReducedMotion={false} />}>
             <PortalCanvas scrollYProgress={smoothProgress} isMobile={isMobile} />
           </ErrorBoundary>
         ) : (
-          <PortalRingsFallback progress={smoothProgress} isReducedMotion={isReducedMotion} />
+          <PortalRingsFallback progress={progressValue} isReducedMotion={isReducedMotion} />
         )}
 
         <div className="absolute inset-0 pointer-events-none select-none" style={{ zIndex: 25, opacity: 0.03, backgroundImage: "linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,0.25) 50%)", backgroundSize: "100% 4px" }} />
