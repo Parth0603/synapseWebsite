@@ -21,7 +21,7 @@ export function NixieCountdown() {
 
   useEffect(() => {
     setMounted(true);
-    const targetDate = new Date("2026-06-20T00:00:00Z").getTime();
+    const targetDate = new Date("2026-06-26T09:00:00+05:30").getTime();
 
     const calculateTime = () => {
       const now = Date.now();

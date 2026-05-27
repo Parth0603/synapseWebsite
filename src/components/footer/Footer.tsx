@@ -25,7 +25,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 pb-12 border-b border-white/5">
           
           {/* Brand Info + Active Grid lock */}
-          <div className="md:col-span-5 flex flex-col justify-between">
+          <div className="md:col-span-4 flex flex-col justify-between">
             <div>
               <span className="text-lg font-black tracking-widest text-white font-display">
                 SYNAPSE<span className="text-brand-violet font-mono text-xs ml-1 font-medium">[1.0]</span>
@@ -51,7 +51,7 @@ export default function Footer() {
 
           {/* Links Block 1: Info & Vaults */}
           <div className="md:col-span-3">
-            <h4 className="font-mono text-2xs text-brand-violet/60 font-bold uppercase tracking-widest mb-4">
+            <h4 className="font-mono text-2xs text-brand-violet/60 font-bold uppercase tracking-widest mb-4 whitespace-nowrap">
               [ LANDING_SECTIONS ]
             </h4>
             <ul className="space-y-2.5 text-2xs md:text-xs font-mono">
@@ -84,26 +84,26 @@ export default function Footer() {
           </div>
 
           {/* Links Block 2: Syndicate tracks */}
-          <div className="md:col-span-2">
-            <h4 className="font-mono text-2xs text-brand-violet/60 font-bold uppercase tracking-widest mb-4">
+          <div className="md:col-span-3">
+            <h4 className="font-mono text-2xs text-brand-violet/60 font-bold uppercase tracking-widest mb-4 whitespace-nowrap">
               [ ACTIVE_TRACKS ]
             </h4>
             <ul className="space-y-2.5 text-2xs font-mono">
               <li className="text-obsidian-400 hover:text-brand-violet transition-colors select-none">
-                COGNITIVE_AI_SYSTEMS
+                ARTIFICIAL_INTELLIGENCE
               </li>
               <li className="text-obsidian-400 hover:text-brand-violet transition-colors select-none">
-                EVM_SCALING_INTEROPS
+                BLOCKCHAIN_ECOSYSTEMS
               </li>
               <li className="text-obsidian-400 hover:text-brand-violet transition-colors select-none">
-                OPEN_TRACK_SYNTHESIS
+                SPONSOR_LED_TRACKS
               </li>
             </ul>
           </div>
 
           {/* Links Block 3: Legal/Support */}
           <div className="md:col-span-2">
-            <h4 className="font-mono text-2xs text-brand-violet/60 font-bold uppercase tracking-widest mb-4">
+            <h4 className="font-mono text-2xs text-brand-violet/60 font-bold uppercase tracking-widest mb-4 whitespace-nowrap">
               [ PROTOCOLS ]
             </h4>
             <ul className="space-y-2.5 text-2xs md:text-xs font-mono">
@@ -133,14 +133,14 @@ export default function Footer() {
           {/* Desaturated core sponsors validation */}
           <div className="flex flex-col gap-2">
             <span className="font-mono text-[9px] text-obsidian-500 uppercase tracking-widest">
-              PROUDLY SUPPORTED BY institutional PARTNERS
+              PROUDLY SUPPORTED BY INSTITUTIONAL PARTNERS
             </span>
             <div className="flex items-center gap-6 mt-1 opacity-45 group">
               <span className="font-mono text-2xs font-bold text-white tracking-widest border border-white/10 px-2.5 py-1 select-none hover:opacity-100 hover:border-white/30 transition-all cursor-default">
                 ORANET AI
               </span>
               <span className="font-mono text-2xs font-bold text-white tracking-widest border border-white/10 px-2.5 py-1 select-none hover:opacity-100 hover:border-white/30 transition-all cursor-default">
-                ETHERSYNC
+                AWADH FOODS
               </span>
             </div>
           </div>

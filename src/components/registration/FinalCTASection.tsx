@@ -66,7 +66,7 @@ export default function FinalCTASection() {
             >
               <span className="w-1.5 h-1.5 bg-brand-amber rounded-full animate-pulse" />
               <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-brand-amber font-bold">
-                [ SYNAPSE_INITIATION_PROTOCOL ]
+                [ SYNAPSE_REGISTRATION_PORTAL ]
               </span>
             </motion.div>
 
@@ -78,7 +78,7 @@ export default function FinalCTASection() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="text-4xl sm:text-5xl md:text-6xl font-black font-display tracking-tight text-white mb-6 uppercase leading-none"
             >
-              ENTER THE COHORT
+              JOIN SYNAPSE 1.0
             </motion.h2>
 
             {/* Dynamic Scarcity Line */}
@@ -91,7 +91,7 @@ export default function FinalCTASection() {
             >
               <div className="w-48 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
               <span className="font-mono text-[10px] text-brand-amber font-bold tracking-widest mt-1">
-                [ ACTIVE_CAPACITY: 412/500_SLOTS_SECURED ]
+                [ REGISTRATIONS CLOSING SOON ]
               </span>
             </motion.div>
 
@@ -114,7 +114,7 @@ export default function FinalCTASection() {
               transition={{ duration: 0.6, delay: 0.4 }}
               className="max-w-2xl text-xs md:text-sm font-mono text-obsidian-350 tracking-wide leading-relaxed mb-10 text-center"
             >
-              ACTIVATE YOUR SYSTEM METRIC. SECURE RUN-TIME CREDENTIALS TO SYNDICATE HIGH-INTENSITY COLLABORATION, SPONSOR-BACKED AWS COMPUTE BUNDLES, SECURED ON-CHAIN PROTOCOLS, AND DIRECT EXPERT VC INGRESS.
+              Join builders, developers, designers, and innovators for a 24-hour hackathon focused on blockchain, AI, automation, and next-generation technology. Build real projects, connect with sponsors, and compete for prizes and opportunities.
             </motion.p>
 
             {/* Double-Conversion Kinetic Actions */}
@@ -126,20 +126,20 @@ export default function FinalCTASection() {
               className="flex flex-col lg:flex-row items-center gap-6 justify-center w-full max-w-2xl mb-12"
             >
               <RegistrationButton
-                label="SECURE_COHORT_SLOT"
-                subLabel="INITIATE_SYNDICATE.sys"
+                label="REGISTER NOW"
+                subLabel="INITIATE_APPLICATION.sys"
                 href="#register"
                 themeColor="gold"
               />
               <RegistrationButton
-                label="APPLY_AS_ACCELERATOR"
+                label="BECOME A SPONSOR"
                 subLabel="SUBMIT_SPONSOR_PROPOSAL"
-                href="mailto:partners@synapse.io?subject=Partner%20Application%20-%20Synapse%201.0"
+                href="mailto:blockchainclub@acropolis.in?subject=Partner%20Application%20-%20Synapse%201.0"
                 isPrimary={false}
               />
             </motion.div>
 
-            {/* Parameters & Timeline Summary Panel */}
+            {/* Parameters & Summary Panel */}
             <motion.div
               initial={{ opacity: 0, y: 15 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -149,26 +149,26 @@ export default function FinalCTASection() {
             >
               <div className="flex flex-col items-center">
                 <span className="font-mono text-[8px] text-obsidian-500 uppercase tracking-widest mb-1">
-                  [ 01 // QUALIFIERS ]
+                  [ 01 // EVENT_DATE ]
                 </span>
                 <span className="font-mono text-[10px] text-white font-bold uppercase tracking-wider">
-                  ONLINE // JUNE 12-13
+                  ONLINE + OFFLINE // JUNE 12-13
                 </span>
               </div>
               <div className="flex flex-col items-center border-y sm:border-y-0 sm:border-x border-white/5 py-4 sm:py-0">
                 <span className="font-mono text-[8px] text-obsidian-500 uppercase tracking-widest mb-1">
-                  [ 02 // ARENA_VENUE ]
+                  [ 02 // VENUE ]
                 </span>
                 <span className="font-mono text-[10px] text-white font-bold uppercase tracking-wider">
-                  AITR // INDORE, IN
+                  AITR, INDORE
                 </span>
               </div>
               <div className="flex flex-col items-center">
                 <span className="font-mono text-[8px] text-obsidian-500 uppercase tracking-widest mb-1">
-                  [ 03 // VALUE_POOL ]
+                  [ 03 // PRIZE_POOL ]
                 </span>
                 <span className="font-mono text-[10px] text-brand-amber font-extrabold uppercase tracking-wider">
-                  ₹105,000+ + AWS_POOL
+                  ₹1,05,000+ & SPONSOR PERKS
                 </span>
               </div>
             </motion.div>

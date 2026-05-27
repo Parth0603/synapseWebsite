@@ -41,11 +41,11 @@ export default function Home() {
       {/* Cinematic Final Registration & Conversion Section */}
       <FinalCTASection />
 
-      {/* Cinematic FAQ Section Objections Resolver */}
-      <FAQSection />
+      {/* Cinematic FAQ Section Objections Resolver (Temporarily Removed) */}
+      {/* <FAQSection /> */}
 
-      {/* Cinematic Contact Syndicate Hub */}
-      <ContactSection />
+      {/* Cinematic Contact Syndicate Hub (Temporarily Removed) */}
+      {/* <ContactSection /> */}
 
       {/* Cinematic Closing Grid Footer */}
       <Footer />
