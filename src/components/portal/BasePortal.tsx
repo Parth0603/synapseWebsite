@@ -114,9 +114,8 @@ export default function BasePortal() {
       progressValue.set(1);
       targetProg = 1;
 
-      // Both forward and backward lock positions are now stickyBottom,
-      // so always sync to stickyBottom before the final scroll.
-      lenisRef.current?.scrollTo(stickyBottom(), { immediate: true });
+      // Sync to portalTop (where the forward lock snaps) then scroll to portalBottom.
+      lenisRef.current?.scrollTo(containerRef.current?.offsetTop ?? 0, { immediate: true });
 
       lenisRef.current?.start();
       lenisRef.current?.scrollTo(portalBottom(), {
@@ -125,6 +124,8 @@ export default function BasePortal() {
       });
     };
 
+    // exitBackward is kept so the lock can be cancelled if user reverses while
+    // locked, but it no longer triggers from the sponsor section.
     const exitBackward = () => {
       if (!isLocked) return;
       isLocked = false;
@@ -133,8 +134,7 @@ export default function BasePortal() {
       progressValue.set(0);
       targetProg = 0;
 
-      // Sync to stickyBottom (where the lock always lives now) before exiting.
-      lenisRef.current?.scrollTo(stickyBottom(), { immediate: true });
+      lenisRef.current?.scrollTo(containerRef.current?.offsetTop ?? 0, { immediate: true });
 
       lenisRef.current?.start();
       lenisRef.current?.scrollTo(
@@ -151,12 +151,10 @@ export default function BasePortal() {
 
       lenisRef.current?.stop();
 
-      // Both forward and backward now lock at stickyBottom:
-      // forward = portal bottom just reached viewport bottom (ready to animate)
-      // backward = same position, animation plays in reverse back to hero
-      const snapY = stickyBottom();
+      // Always snap to portalTop: the user sees the portal fill the screen
+      // exactly when scrolling past the hero, then the animation plays.
+      const snapY = containerRef.current?.offsetTop ?? 0;
 
-      // Ensure native and Lenis scroll positions are perfectly synced
       lenisRef.current?.scrollTo(snapY, { immediate: true });
       window.scrollTo({ top: snapY });
 
@@ -164,7 +162,6 @@ export default function BasePortal() {
         targetProg = 0;
         progressValue.set(0);
       } else {
-        // Start backward at 0.75 so portal rings are instantly visible
         targetProg = 0.75;
         progressValue.set(0.75);
       }
@@ -174,14 +171,14 @@ export default function BasePortal() {
 
     // ─── Wheel handler (capture phase) ───────────────────────────────────────
     const handleWheel = (e: WheelEvent) => {
-      // Pre-lock: detect backward entry.
-      // Only re-engage the portal when the user is scrolling UP and their scroll
-      // position is within the sponsor section's TOP area — defined as within
-      // one viewport height past the portal section end. This prevents the portal
-      // from hijacking scrolls from deep inside the sponsors / subsequent sections.
+      const portalTop = containerRef.current?.offsetTop ?? 0;
+
+      // Pre-lock: BACKWARD entry (scrolling UP, returning from sponsors/below).
+      // Only triggers when scrollY is within the same portalTop window as forward
+      // i.e. the user has naturally scrolled all the way back through the portal
+      // section and its top is now aligned with the viewport top.
       if (!isLocked && isCompleted && e.deltaY < 0) {
-        const sponsorTopThreshold = portalBottom() + window.innerHeight * 0.15;
-        if (window.scrollY <= sponsorTopThreshold) {
+        if (window.scrollY >= portalTop - 50 && window.scrollY <= portalTop + 200) {
           e.stopImmediatePropagation();
           e.preventDefault();
           enterLock("backward");
@@ -190,13 +187,10 @@ export default function BasePortal() {
         return;
       }
 
-      // Pre-lock: detect forward entry.
-      // Only engage the animation lock when the user has naturally scrolled to
-      // stickyBottom — i.e., the portal section's bottom is at the viewport bottom.
-      // Before this point the portal renders as a static background.
+      // Pre-lock: FORWARD entry (scrolling DOWN from hero).
+      // Lock triggers when the portal section top reaches the viewport top.
       if (!isLocked && !isCompleted && e.deltaY > 0) {
-        const sb = stickyBottom();
-        if (window.scrollY >= sb - window.innerHeight * 0.15 && window.scrollY <= sb + window.innerHeight * 0.3) {
+        if (window.scrollY >= portalTop - 50 && window.scrollY <= portalTop + 200) {
           e.stopImmediatePropagation();
           e.preventDefault();
           enterLock("forward");
@@ -205,7 +199,8 @@ export default function BasePortal() {
         return;
       }
 
-      // Locked: drive animation
+      // Locked: drive animation. Scrolling forward completes it, scrolling
+      // backward cancels and returns user to hero.
       if (!isLocked) return;
       e.stopImmediatePropagation();
       e.preventDefault();
@@ -245,8 +240,8 @@ export default function BasePortal() {
       if (!isLocked) return;
       if (isSnapping) return;
 
-      // Both forward and backward lock at stickyBottom now
-      const snapY = stickyBottom();
+      // Always snap to portalTop while locked
+      const snapY = containerRef.current?.offsetTop ?? 0;
       if (Math.abs(window.scrollY - snapY) > 1) {
         isSnapping = true;
         window.scrollTo({ top: snapY });
@@ -266,7 +261,8 @@ export default function BasePortal() {
       const direction = v > lastProg ? "down" : "up";
       lastProg = v;
 
-      // Reset completion only when genuinely back above the portal entrance.
+      // Reset completion when user has scrolled back above the portal section.
+      // This re-arms the forward lock for the next downward pass.
       if (v < 0.005 && !isLocked && window.scrollY < (containerRef.current?.offsetTop ?? 0) + 100) {
         isCompleted = false;
         targetProg = 0;
@@ -274,8 +270,8 @@ export default function BasePortal() {
         return;
       }
 
-      // Safety net: if user fast-scrolled past stickyBottom without triggering the
-      // lock, mark as completed at v = 1 so the lock never re-arms from sponsors.
+      // Safety net: fast-scroll past the portal without triggering the lock.
+      // Mark completed so sponsors never re-arm the portal.
       if (v >= 0.999 && !isLocked && !isCompleted) {
         isCompleted = true;
         progressValue.set(1);
@@ -283,23 +279,24 @@ export default function BasePortal() {
         return;
       }
 
-      // Forward lock fallback (trackpad / slow scroll).
-      // Trigger near scrollYProgress = 1 (= stickyBottom), with a strict
-      // window.scrollY guard so it only fires when the user is genuinely
-      // at the portal section's end, not inside sponsors.
-      if (direction === "down" && v >= 0.88 && v < 1.0 && !isLocked && !isCompleted) {
-        const sb = stickyBottom();
-        if (window.scrollY >= sb - window.innerHeight * 0.2 && window.scrollY <= sb + window.innerHeight * 0.2) {
+      // Forward lock fallback (trackpad / slow scroll entering portal top).
+      // Only fires when scrollY is genuinely near the portal section entrance.
+      if (direction === "down" && v > 0.01 && v < 0.96 && !isLocked && !isCompleted) {
+        const portalTop = containerRef.current?.offsetTop ?? 0;
+        if (window.scrollY >= portalTop - 80 && window.scrollY <= portalTop + 300) {
           enterLock("forward");
         }
         return;
       }
 
-      // Backward lock fallback — ONLY fire when still very close to portal exit
-      // (v > 0.92 means the scroll position is near the portal section's own bottom,
-      //  which maps to just entered sponsors). Prevents re-triggering from deep in sponsors.
-      if (direction === "up" && v > 0.92 && v < 1.0 && !isLocked && isCompleted) {
-        enterLock("backward");
+      // Backward lock fallback (trackpad / slow scroll returning from sponsors).
+      // Mirrors the forward logic: only fires when the user has naturally scrolled
+      // back through the portal section and portalTop aligns with the viewport top.
+      if (direction === "up" && v > 0.0 && v < 0.05 && !isLocked && isCompleted) {
+        const portalTop = containerRef.current?.offsetTop ?? 0;
+        if (window.scrollY >= portalTop - 80 && window.scrollY <= portalTop + 300) {
+          enterLock("backward");
+        }
         return;
       }
     });
