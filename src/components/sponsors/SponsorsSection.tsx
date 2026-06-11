@@ -35,7 +35,7 @@ const SPONSOR_TIERS: SponsorTier[] = [
         id: "title-open",
         name: "Finding",
         subtitle: "You can be one",
-        url: "mailto:partners@synapse.io?subject=Title%20Sponsor%20Inquiry",
+        url: "mailto:blockchainclub@acropolis.in?subject=Title%20Sponsor%20Inquiry",
         isPlaceholder: true,
       },
     ],
@@ -209,7 +209,7 @@ export default function SponsorsSection() {
             </p>
           </div>
           <a
-            href="mailto:partners@synapse.io?subject=Synapse%201.0%20Partnership%20Inquiry"
+            href="mailto:blockchainclub@acropolis.in?subject=Synapse%201.0%20Partnership%20Inquiry"
             className="group relative shrink-0 flex items-center gap-2 font-mono text-[11px] tracking-widest text-white uppercase font-bold px-7 py-3.5 rounded-lg border border-brand-violet/30 hover:border-brand-violet/60 hover:bg-brand-violet/10 transition-all duration-300 cursor-pointer overflow-hidden"
           >
             <div className="absolute inset-0 -translate-x-full group-hover:translate-x-0 bg-gradient-to-r from-brand-violet/10 via-brand-violet/5 to-transparent transition-transform duration-500 pointer-events-none" />

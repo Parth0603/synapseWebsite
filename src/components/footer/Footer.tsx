@@ -122,6 +122,16 @@ export default function Footer() {
                   TERMS_OF_SERVICE
                 </a>
               </li>
+              <li>
+                <a href="mailto:blockchainclub@acropolis.in" className="text-obsidian-400 hover:text-white uppercase transition-colors">
+                  CONTACT_EMAIL
+                </a>
+              </li>
+              <li>
+                <span className="text-obsidian-400 uppercase select-none">
+                  VENUE: AITR, INDORE
+                </span>
+              </li>
             </ul>
           </div>
 

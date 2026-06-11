@@ -41,7 +41,7 @@ const FAQ_DATA: FAQItem[] = [
     num: "04",
     category: "logistics",
     question: "How do the Online Qualification and Offline Finals work?",
-    answer: "The event is structured in two major stages. First, the online qualifications run remotely on git repositories. Once the jury panel validates submissions, the top-tier cohorts will be invited for the offline grand finals on June 12–13 at the Acropolis Institute campus in Indore, MP.",
+    answer: "The event is structured in two major stages. First, the online qualifications run remotely on git repositories. Once the jury panel validates submissions, the top-tier cohorts will be invited for the offline grand finals on September 12–13 at the Acropolis Institute campus in Indore, MP.",
   },
   {
     id: "faq-5",

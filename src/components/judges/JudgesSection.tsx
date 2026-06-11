@@ -254,7 +254,7 @@ export default function JudgesSection() {
                 REGISTER NOW
               </motion.a>
               <motion.a
-                href="mailto:partners@synapse.io?subject=Mentor%20Application%20-%20Synapse%201.0"
+                href="mailto:blockchainclub@acropolis.in?subject=Mentor%20Application%20-%20Synapse%201.0"
                 whileHover={{ scale: 1.02, backgroundColor: "rgba(255,255,255,0.03)" }}
                 whileTap={{ scale: 0.98 }}
                 className="flex-1 sm:flex-none text-center px-8 py-3.5 rounded font-mono text-xs font-bold tracking-widest text-white border border-white/10 hover:border-white/20 transition-all uppercase select-none"

@@ -27,14 +27,14 @@ const fontMono = Fira_Code({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://synapse.acropolisblockchain.club"),
-  title: "SYNAPSE 1.0 — Immersive AI + Blockchain Hackathon",
-  description: "Join the elite cohort at SYNAPSE 1.0 (June 12-13, Indore). A hybrid hackathon organized by Acropolis Blockchain Club. Build high-fidelity AI and Web3 protocols.",
+  title: "SYNAPSE 1.0 | 24-Hour Student Hackathon | September 2026",
+  description: "SYNAPSE 1.0 is a 24-hour hybrid hackathon hosted by Acropolis Institute of Technology & Research, bringing together 250+ student innovators from across India to build solutions in AI, Web3, cybersecurity, cloud, and emerging technologies.",
   alternates: {
     canonical: "/",
   },
   openGraph: {
-    title: "SYNAPSE 1.0 — Immersive AI + Blockchain Hackathon",
-    description: "Join the elite cohort at SYNAPSE 1.0 (June 12-13, Indore). Build high-fidelity AI and Web3 protocols. Free registration.",
+    title: "SYNAPSE 1.0 | 24-Hour Student Hackathon | September 2026",
+    description: "SYNAPSE 1.0 is a 24-hour hybrid hackathon hosted by Acropolis Institute of Technology & Research, bringing together 250+ student innovators from across India to build solutions in AI, Web3, cybersecurity, cloud, and emerging technologies.",
     url: "https://synapse.acropolisblockchain.club",
     siteName: "SYNAPSE 1.0",
     images: [
@@ -50,8 +50,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "SYNAPSE 1.0 — Immersive AI + Blockchain Hackathon",
-    description: "Join the elite cohort at SYNAPSE 1.0 (June 12-13, Indore). Free registration.",
+    title: "SYNAPSE 1.0 | 24-Hour Student Hackathon | September 2026",
+    description: "SYNAPSE 1.0 is a 24-hour hybrid hackathon hosted by Acropolis Institute of Technology & Research, bringing together 250+ student innovators from across India to build solutions in AI, Web3, cybersecurity, cloud, and emerging technologies.",
     images: ["/og-image.png"],
     creator: "@acropolisblockchain",
   },
@@ -83,9 +83,9 @@ const eventSchema = {
   "@context": "https://schema.org",
   "@type": "Event",
   "name": "SYNAPSE 1.0",
-  "description": "SYNAPSE 1.0 is an immersive, high-fidelity AI + Blockchain hybrid hackathon organized by the Acropolis Blockchain Club in Indore, MP, India.",
-  "startDate": "2026-06-12T09:00:00+05:30",
-  "endDate": "2026-06-13T18:00:00+05:30",
+  "description": "SYNAPSE 1.0 is a 24-hour hybrid hackathon hosted by Acropolis Institute of Technology & Research, bringing together 250+ student innovators from across India to build solutions in AI, Web3, cybersecurity, cloud, and emerging technologies.",
+  "startDate": "2026-09-12T08:00:00+05:30",
+  "endDate": "2026-09-13T18:00:00+05:30",
   "eventAttendanceMode": "https://schema.org/MixedEventAttendanceMode",
   "eventStatus": "https://schema.org/EventScheduled",
   "location": [
@@ -169,7 +169,7 @@ const faqSchema = {
       "name": "How do the Online Qualification and Offline Finals work?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "The event is structured in two major stages. First, the online qualifications run remotely on git repositories. Once the jury panel validates submissions, the top-tier cohorts will be invited for the offline grand finals on June 12–13 at the Acropolis Institute campus in Indore, MP."
+        "text": "The event is structured in two major stages. First, the online qualifications run remotely on git repositories. Once the jury panel validates submissions, the top-tier cohorts will be invited for the offline grand finals on September 12–13 at the Acropolis Institute campus in Indore, MP."
       }
     },
     {

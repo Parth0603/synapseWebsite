@@ -10,7 +10,7 @@ interface TimeLeft {
 }
 
 export default function CountdownSystem() {
-  const targetDate = "2026-06-12T09:00:00+05:30"; // SYNAPSE 1.0 Launch time
+  const targetDate = "2026-09-12T08:00:00+05:30"; // SYNAPSE 1.0 Launch time
 
   const calculateTimeLeft = (): TimeLeft => {
     const difference = +new Date(targetDate) - +new Date();
@@ -74,40 +74,53 @@ export default function CountdownSystem() {
         </span>
       </div>
 
-      {/* Retro-Tech Timer Grid */}
-      <div className="grid grid-cols-4 gap-3 md:gap-4">
-        {timeSegments.map((segment) => (
-          <div
-            key={segment.id}
-            className="relative bg-obsidian-950/60 border border-white/5 rounded p-3 md:p-4 flex flex-col items-center justify-center overflow-hidden group"
-          >
-            {/* Visual corner indicators */}
-            <div className="absolute top-1 left-1 w-1 h-1 border-t border-l border-white/10" />
-            <div className="absolute top-1 right-1 w-1 h-1 border-t border-r border-white/10" />
-            <div className="absolute bottom-1 left-1 w-1 h-1 border-b border-l border-white/10" />
-            <div className="absolute bottom-1 right-1 w-1 h-1 border-b border-r border-white/10" />
-
-            {/* Glowing vertical alignment vector (subtle) */}
-            <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-            {/* MONOSPACE DATA DISPLAY */}
-            <span
-              className={`font-mono text-3xl md:text-4xl lg:text-5xl font-black tracking-tight ${
-                segment.highlight && !timeLeft.isExpired
-                  ? "text-brand-amber shadow-glow-sm"
-                  : "text-white"
-              }`}
+      {/* Retro-Tech Timer Grid or Expired Message */}
+      {timeLeft.isExpired ? (
+        <div
+          className="font-mono text-center font-bold tracking-wider px-6 py-8 rounded border border-brand-amber/30 bg-brand-amber/5 shadow-[0_0_20px_rgba(249,115,22,0.1)]"
+          style={{
+            color: "hsl(32,95%,62%)",
+            textShadow: "0 0 10px hsla(32,95%,62%,0.5)",
+            fontSize: "clamp(1.1rem, 3.5vw, 1.8rem)",
+          }}
+        >
+          SYNAPSE 1.0 HAS BEGUN 🚀
+        </div>
+      ) : (
+        <div className="grid grid-cols-4 gap-3 md:gap-4">
+          {timeSegments.map((segment) => (
+            <div
+              key={segment.id}
+              className="relative bg-obsidian-950/60 border border-white/5 rounded p-3 md:p-4 flex flex-col items-center justify-center overflow-hidden group"
             >
-              {segment.value}
-            </span>
+              {/* Visual corner indicators */}
+              <div className="absolute top-1 left-1 w-1 h-1 border-t border-l border-white/10" />
+              <div className="absolute top-1 right-1 w-1 h-1 border-t border-r border-white/10" />
+              <div className="absolute bottom-1 left-1 w-1 h-1 border-b border-l border-white/10" />
+              <div className="absolute bottom-1 right-1 w-1 h-1 border-b border-r border-white/10" />
 
-            {/* Grid label */}
-            <span className="font-mono text-[8px] text-obsidian-450 uppercase tracking-wider mt-1.5 block">
-              {segment.label}
-            </span>
-          </div>
-        ))}
-      </div>
+              {/* Glowing vertical alignment vector (subtle) */}
+              <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+              {/* MONOSPACE DATA DISPLAY */}
+              <span
+                className={`font-mono text-3xl md:text-4xl lg:text-5xl font-black tracking-tight ${
+                  segment.highlight && !timeLeft.isExpired
+                    ? "text-brand-amber shadow-glow-sm"
+                    : "text-white"
+                }`}
+              >
+                {segment.value}
+              </span>
+
+              {/* Grid label */}
+              <span className="font-mono text-[8px] text-obsidian-450 uppercase tracking-wider mt-1.5 block">
+                {segment.label}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Dynamic Status Bar */}
       <div className="mt-3 flex items-center justify-between font-mono text-[8px] text-obsidian-500">

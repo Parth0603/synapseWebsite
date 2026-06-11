@@ -56,15 +56,10 @@ export function CentralStack() {
       {/* ── Status badge ── */}
       <motion.div
         variants={badgeVariants}
-        className="mb-8 inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full border border-brand-violet/25 bg-brand-violet/[0.05] backdrop-blur-sm hover:border-brand-violet/45 transition-colors duration-400 cursor-default select-none"
+        className="mb-8 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-brand-violet/25 bg-brand-violet/[0.05] backdrop-blur-sm hover:border-brand-violet/45 transition-colors duration-400 cursor-default select-none"
       >
-        {/* Pulsing live indicator */}
-        <span className="relative flex h-[7px] w-[7px]">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-violet opacity-60" />
-          <span className="relative inline-flex rounded-full h-[7px] w-[7px] bg-brand-violet" />
-        </span>
-        <span className="font-mono text-[9px] tracking-[0.28em] text-brand-violet font-medium">
-          HYBRID INNOVATION SUMMIT // JUNE 12-13
+        <span className="font-mono text-[9px] tracking-[0.16em] text-brand-violet font-medium uppercase">
+          ⚡ India&apos;s Student-Led Hybrid Hackathon | September 12-13, 2026
         </span>
       </motion.div>
 
@@ -123,11 +118,11 @@ export function CentralStack() {
       {/* ── Descriptor copy ── */}
       <motion.p
         variants={itemVariants}
-        className="text-slate-400 text-sm sm:text-base md:text-lg font-body max-w-[520px] mx-auto leading-[1.75] antialiased font-light tracking-[0.01em]"
+        className="text-slate-400 text-sm sm:text-base md:text-lg font-body max-w-[620px] mx-auto leading-[1.75] antialiased font-light tracking-[0.01em]"
       >
-        Where advanced AI models, decentralized systems, automation, and emerging architectures converge.{" "}
-        <span className="text-slate-300">Join elite engineers, Web3 builders, and founders</span>{" "}
-        to co-develop production-ready protocols.
+        A premier 24-hour hybrid hackathon uniting 250+ student innovators across India.{" "}
+        <span className="text-slate-300">Build high-impact solutions</span>{" "}
+        in AI, Web3, Cybersecurity, Cloud, and Emerging Tech.
       </motion.p>
 
       {/* ── Mono technical detail line ── */}
@@ -136,8 +131,8 @@ export function CentralStack() {
         className="mt-6 flex items-center gap-3"
       >
         <span className="w-5 h-[1px] bg-white/10" />
-        <span className="font-mono text-[9px] tracking-[0.30em] text-slate-600 uppercase select-none">
-          AGENTIC SYSTEMS × DECENTRALIZED COMPUTE × PRODUCTION RUNWAY
+        <span className="font-mono text-[9px] tracking-[0.25em] text-slate-600 uppercase select-none">
+          AI × WEB3 × CYBERSECURITY × CLOUD × EMERGING TECH
         </span>
         <span className="w-5 h-[1px] bg-white/10" />
       </motion.div>

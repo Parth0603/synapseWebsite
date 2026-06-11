@@ -114,7 +114,7 @@ export default function FinalCTASection() {
               transition={{ duration: 0.6, delay: 0.4 }}
               className="max-w-2xl text-xs md:text-sm font-mono text-obsidian-350 tracking-wide leading-relaxed mb-10 text-center"
             >
-              Join builders, developers, designers, and innovators for a 24-hour hackathon focused on blockchain, AI, automation, and next-generation technology. Build real projects, connect with sponsors, and compete for prizes and opportunities.
+              Join builders, developers, designers, and innovators for a 24-hour hybrid hackathon. Build real projects in AI, Web3, cybersecurity, and emerging tech, connect with top sponsors, and compete for prizes. Open to students from all colleges and universities across India. Free registration.
             </motion.p>
 
             {/* Double-Conversion Kinetic Actions */}
@@ -152,7 +152,7 @@ export default function FinalCTASection() {
                   [ 01 // EVENT_DATE ]
                 </span>
                 <span className="font-mono text-[10px] text-white font-bold uppercase tracking-wider">
-                  ONLINE + OFFLINE // JUNE 12-13
+                  ONLINE + OFFLINE // SEPTEMBER 12-13, 2026
                 </span>
               </div>
               <div className="flex flex-col items-center border-y sm:border-y-0 sm:border-x border-white/5 py-4 sm:py-0">

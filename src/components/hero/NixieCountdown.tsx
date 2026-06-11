@@ -12,6 +12,7 @@ interface TimeRemaining {
 
 export function NixieCountdown() {
   const [mounted, setMounted] = useState(false);
+  const [isExpired, setIsExpired] = useState(false);
   const [timeLeft, setTimeLeft] = useState<TimeRemaining>({
     days: "28",
     hours: "14",
@@ -21,15 +22,17 @@ export function NixieCountdown() {
 
   useEffect(() => {
     setMounted(true);
-    const targetDate = new Date("2026-06-26T09:00:00+05:30").getTime();
+    const targetDate = new Date("2026-09-12T08:00:00+05:30").getTime();
 
     const calculateTime = () => {
       const now = Date.now();
       const diff = targetDate - now;
       if (diff <= 0) {
+        setIsExpired(true);
         setTimeLeft({ days: "00", hours: "00", minutes: "00", seconds: "00" });
         return;
       }
+      setIsExpired(false);
       setTimeLeft({
         days:    Math.floor(diff / 86400000).toString().padStart(2, "0"),
         hours:   Math.floor((diff % 86400000) / 3600000).toString().padStart(2, "0"),
@@ -51,19 +54,34 @@ export function NixieCountdown() {
       className="flex flex-col items-center gap-3 mt-10 mb-8 relative z-40"
     >
       <span className="font-mono text-[9px] tracking-[0.38em] text-slate-600 uppercase select-none">
-        REGISTRATION GATE CLOSING IN
+        {mounted && isExpired ? "EVENT STATUS" : "REGISTRATION GATE CLOSING IN"}
       </span>
 
-      {/* Tube row */}
-      <div className="flex items-center gap-2 sm:gap-3">
-        <NixieTube value={mounted ? timeLeft.days    : "28"} label="DAYS"    />
-        <Separator />
-        <NixieTube value={mounted ? timeLeft.hours   : "14"} label="HRS"     />
-        <Separator />
-        <NixieTube value={mounted ? timeLeft.minutes : "06"} label="MIN"     />
-        <Separator />
-        <NixieTube value={mounted ? timeLeft.seconds : "00"} label="SEC"     />
-      </div>
+      {mounted && isExpired ? (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="font-mono text-center font-bold tracking-wider px-6 py-4 rounded-xl border border-orange-500/30 bg-orange-500/5 shadow-[0_0_20px_rgba(249,115,22,0.15)]"
+          style={{
+            color: "hsl(32,95%,62%)",
+            textShadow: "0 0 10px hsla(32,95%,62%,0.65), 0 0 24px hsla(32,95%,62%,0.20)",
+            fontSize: "clamp(1.1rem, 3.5vw, 1.8rem)",
+          }}
+        >
+          SYNAPSE 1.0 HAS BEGUN 🚀
+        </motion.div>
+      ) : (
+        /* Tube row */
+        <div className="flex items-center gap-2 sm:gap-3">
+          <NixieTube value={mounted ? timeLeft.days    : "28"} label="DAYS"    />
+          <Separator />
+          <NixieTube value={mounted ? timeLeft.hours   : "14"} label="HRS"     />
+          <Separator />
+          <NixieTube value={mounted ? timeLeft.minutes : "06"} label="MIN"     />
+          <Separator />
+          <NixieTube value={mounted ? timeLeft.seconds : "00"} label="SEC"     />
+        </div>
+      )}
     </motion.div>
   );
 }

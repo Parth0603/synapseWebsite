@@ -41,7 +41,7 @@ function Counter({ to, suffix = "" }: { to: number; suffix?: string }) {
 
 // ─── Timeline ─────────────────────────────────────────────────────────────────
 const TIMELINE = [
-  { day: "DAY 1", date: "26 June", color: "hsl(271,91%,65%)", events: [
+  { day: "DAY 1", date: "12 September", color: "hsl(271,91%,65%)", events: [
     { time: "09:00", label: "Inauguration & Opening Ceremony" },
     { time: "10:00", label: "Problem Statements Released" },
     { time: "10:30", label: "Hacking Officially Begins" },
@@ -49,7 +49,7 @@ const TIMELINE = [
     { time: "18:00", label: "Mentor Office Hours" },
     { time: "22:00", label: "Progress Check-in" },
   ]},
-  { day: "DAY 2", date: "27 June", color: "hsl(24,95%,53%)", events: [
+  { day: "DAY 2", date: "13 September", color: "hsl(24,95%,53%)", events: [
     { time: "02:00", label: "Midnight Sprint & Snacks" },
     { time: "09:30", label: "Final Submissions Close" },
     { time: "11:00", label: "Jury Evaluation" },
@@ -303,7 +303,7 @@ export default function DetailsPage() {
             color: "hsl(271,91%,75%)", marginBottom: "36px",
           }}>
             <span style={{ width: 6, height: 6, borderRadius: "50%", background: "hsl(271,91%,65%)", display: "inline-block", animation: "pulse-dot 2s ease-in-out infinite" }} />
-            26 – 27 JUNE 2026 &nbsp;·&nbsp; AITR, INDORE
+            12 – 13 SEPTEMBER 2026 &nbsp;·&nbsp; AITR, INDORE
           </div>
 
           {/* Main title */}
@@ -433,7 +433,7 @@ export default function DetailsPage() {
           </p>
           <p style={{ ...bT, marginTop: "16px" }}>
             Over <strong style={{ color: "#F8FAFC" }}>24 hours</strong> on{" "}
-            <strong style={{ color: "#F8FAFC" }}>June 26–27, 2026</strong>, teams of 1–4 compete
+            <strong style={{ color: "#F8FAFC" }}>September 12–13, 2026</strong>, teams of 1–4 compete
             across two structured rounds: an <strong style={{ color: "#F8FAFC" }}>online qualifier</strong> followed
             by an <strong style={{ color: "#F8FAFC" }}>offline grand finale</strong> at the AITR campus in Indore.
             Mentorship, workshops, and sponsor-led challenge tracks are woven throughout.
@@ -447,7 +447,7 @@ export default function DetailsPage() {
           gap: "14px",
         }}>
           {[
-            { label: "Dates", value: "26–27 June 2026" },
+            { label: "Dates", value: "12–13 September 2026" },
             { label: "Venue", value: "AITR Campus, Indore" },
             { label: "Duration", value: "24 Hours" },
             { label: "Team Size", value: "1–4 Members" },
@@ -608,7 +608,7 @@ export default function DetailsPage() {
       <section style={{ padding: "100px 24px", borderTop: "1px solid rgba(255,255,255,.05)", background: "rgba(10,11,22,.6)" }}>
         <div style={{ maxWidth: "660px", margin: "0 auto" }}>
           <SectionLabel>EVENT SCHEDULE</SectionLabel>
-          <h2 style={sH}>June 26–27 · 24 Hours</h2>
+          <h2 style={sH}>September 12–13 · 24 Hours</h2>
 
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "40px", marginTop: "48px" }}>
             {TIMELINE.map((day, di) => (
@@ -904,7 +904,7 @@ export default function DetailsPage() {
           SYNAPSE 1.0
         </span>
         <span style={{ fontSize: "12px", color: "rgba(255,255,255,.2)", fontFamily: "var(--font-mono, monospace)" }}>
-          Acropolis Blockchain Club · AITR Indore · June 26–27, 2026
+          Acropolis Blockchain Club · AITR Indore · September 12–13, 2026
         </span>
         <Link href="/" style={{ fontSize: "13px", color: "rgba(255,255,255,.35)", textDecoration: "none" }}>
           ← Back to main site
